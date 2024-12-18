@@ -7,7 +7,7 @@ import org.hibernate.Session;
 import java.util.List;
 
 public class DBRead {
-    public static List<ContactInfo> readContactInfo() {
+    public static List<ContactInfo> getAllContactInfo() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery("FROM ContactInfo", ContactInfo.class).list();
         } catch (Exception e) {
@@ -15,7 +15,7 @@ public class DBRead {
         }
     }
 
-    public static List<FamilyBackground> readFamilyBackground() {
+    public static List<FamilyBackground> getAllFamilyBackground() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery("FROM FamilyBackground", FamilyBackground.class).list();
         } catch (Exception e) {
@@ -23,7 +23,7 @@ public class DBRead {
         }
     }
 
-    public static List<FamilyChild> readFamilyChildren() {
+    public static List<FamilyChild> getAllFamilyChildren() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery("FROM FamilyChild", FamilyChild.class).list();
         } catch (Exception e) {
@@ -31,7 +31,7 @@ public class DBRead {
         }
     }
 
-    public static List<PersonalInfo> readPersonalInfo() {
+    public static List<PersonalInfo> getAllPersonalInfo() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery("FROM PersonalInfo", PersonalInfo.class).list();
         } catch (Exception e) {
@@ -40,7 +40,7 @@ public class DBRead {
 
     }
 
-    public static List<EducBackground> readEducBackground() {
+    public static List<EducBackground> getAllEducBackground() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery("FROM EducBackground ", EducBackground.class).list();
         } catch (Exception e) {
@@ -96,7 +96,7 @@ public class DBRead {
         }
     }
 
-    public static List<RefSex> readRefSex() {
+    public static List<RefSex> getAllRefSex() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery("FROM RefSex", RefSex.class).list();
         } catch (Exception e) {
@@ -112,7 +112,7 @@ public class DBRead {
         }
     }
 
-    public static List<RefCitizenship> readRefCitizenship() {
+    public static List<RefCitizenship> getAllRefCitizenship() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery("FROM RefCitizenship", RefCitizenship.class).list();
         } catch (Exception e) {
@@ -128,7 +128,7 @@ public class DBRead {
         }
     }
 
-    public static List<RefCivilstatus> readRefCivilstatus() {
+    public static List<RefCivilstatus> getAllRefCivilstatus() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery("FROM RefCivilstatus", RefCivilstatus.class).list();
         } catch (Exception e) {
@@ -144,7 +144,7 @@ public class DBRead {
         }
     }
 
-    public static List<RefCitAcq> readRefCitAcq() {
+    public static List<RefCitAcq> getAllRefCitAcq() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery("FROM RefCitAcq", RefCitAcq.class).list();
         } catch (Exception e) {
@@ -160,7 +160,7 @@ public class DBRead {
         }
     }
 
-    public static List<RefEducLevel> readRefEducLevel() {
+    public static List<RefEducLevel> getAllRefEducLevel() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery("FROM RefEducLevel", RefEducLevel.class).list();
         } catch (Exception e) {
