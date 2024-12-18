@@ -1,4 +1,6 @@
-import React from 'react';
+"use client";
+
+import React, {useEffect, useState} from 'react';
 import {Heading} from "@/components/ui/heading";
 import Link from "next/link";
 import {cn} from "@/lib/utils";
@@ -6,19 +8,14 @@ import {buttonVariants} from "@/components/ui/button";
 import {Plus} from "lucide-react";
 import PageContainer from "@/components/layout/page-container";
 
-import {Metadata} from "next"
 import {z} from "zod"
 
 import {columns} from "@/app/database/_components/columns"
 import {DataTable} from "@/app/database/_components/data-table"
-import {taskSchema} from "./data/schema"
-
-export const metadata: Metadata = {
-    title: "Tasks",
-    description: "A task and issue tracker build using Tanstack Table.",
-}
+import {infoSchema} from "./data/schema"
 
 function getTasks() {
+
     const tasks = [
         {
             "id": "TASK-8782",
@@ -721,19 +718,32 @@ function getTasks() {
             "priority": "low"
         }
     ]
-    return z.array(taskSchema).parse(tasks)
+    return z.array(infoSchema).parse(tasks)
 }
 
 export default function Page() {
 
-    const tasks = getTasks()
+    const [ data, setData] = useState( z.array(infoSchema).parse([]));
+
+    useEffect(() => {
+        fetch('http://localhost:8081/Prism/view_database')
+            .then(response => response.json())
+            .then(data => {
+                const newData = z.array(infoSchema).parse(data)
+                setData(newData);
+            })
+            .catch(error => console.error('Error:', error));
+    }, []);
+
+    console.log(data)
+
     return (
         <PageContainer scrollable>
             <div className="space-y-4">
                 <div className="flex items-start justify-between">
                     <Heading
-                        title={`Employee (${1})`}
-                        description="Manage employees (Server side table functionalities.)"
+                        title={`Personal Information (${data.length})`}
+                        description="Manage personal information saved in the database"
                     />
 
                     <Link
@@ -743,7 +753,7 @@ export default function Page() {
                         <Plus className="mr-2 h-4 w-4"/> Add New
                     </Link>
                 </div>
-                <DataTable data={tasks} columns={columns} showPagination={true} showToolbar={true} />
+                <DataTable data={data} columns={columns} showPagination={true} showToolbar={true} />
             </div>
         </PageContainer>
     )

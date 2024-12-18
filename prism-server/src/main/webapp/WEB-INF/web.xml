@@ -6,10 +6,6 @@
     <servlet-name>DBServlet</servlet-name>
     <servlet-class>com.plm.prism.servlet.DBServlet</servlet-class>
   </servlet>
-  <servlet-mapping>
-    <servlet-name>DBServlet</servlet-name>
-    <url-pattern>/api/*</url-pattern>
-  </servlet-mapping>
 
   <error-page>
     <error-code>404</error-code>

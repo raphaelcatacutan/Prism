@@ -6,6 +6,10 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "educ_background")
+@NamedQuery(
+        name = "educBackground.findByPID",
+        query = "FROM EducBackground ci WHERE ci.p = :p"
+)
 public class EducBackground {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +36,30 @@ public class EducBackground {
 
     @Column(name = "honors", length = 50)
     private String honors;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "p_id", nullable = false)
+    private PersonalInfo p;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "educ_level_id", nullable = false)
+    private RefEducLevel educLevel;
+
+    public RefEducLevel getEducLevel() {
+        return educLevel;
+    }
+
+    public void setEducLevel(RefEducLevel educLevel) {
+        this.educLevel = educLevel;
+    }
+
+    public PersonalInfo getP() {
+        return p;
+    }
+
+    public void setP(PersonalInfo p) {
+        this.p = p;
+    }
 
     public Integer getId() {
         return id;

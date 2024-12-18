@@ -6,6 +6,10 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "family_children")
+@NamedQuery(
+        name = "familyChild.findByPID",
+        query = "FROM FamilyChild ci WHERE ci.p = :p"
+)
 public class FamilyChild {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,6 +21,18 @@ public class FamilyChild {
 
     @Column(name = "child_dob")
     private LocalDate childDob;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "p_id", nullable = false)
+    private PersonalInfo p;
+
+    public PersonalInfo getP() {
+        return p;
+    }
+
+    public void setP(PersonalInfo p) {
+        this.p = p;
+    }
 
     public Integer getId() {
         return id;

@@ -4,6 +4,10 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "family_background")
+@NamedQuery(
+        name = "familyBackground.findByPID",
+        query = "FROM FamilyBackground ci WHERE ci.p = :p"
+)
 public class FamilyBackground {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,6 +49,18 @@ public class FamilyBackground {
 
     @Column(name = "mother_mn_mname", length = 50)
     private String motherMnMname;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "p_id", nullable = false)
+    private PersonalInfo p;
+
+    public PersonalInfo getP() {
+        return p;
+    }
+
+    public void setP(PersonalInfo p) {
+        this.p = p;
+    }
 
     public Integer getId() {
         return id;

@@ -4,7 +4,9 @@ import com.plm.prism.entities.*;
 import com.plm.prism.utils.HibernateUtil;
 import org.hibernate.Session;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DBRead {
     public static List<ContactInfo> getAllContactInfo() {
@@ -171,6 +173,93 @@ public class DBRead {
     public static RefEducLevel getRefEducLevel(int educLevelId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.get(RefEducLevel.class, educLevelId);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Map<Integer, String> getRefCitizenshipDesc() {
+        List<RefCitizenship> citizenships = DBRead.getAllRefCitizenship();
+
+        Map<Integer, String> citizenshipDesc = new HashMap<>();
+        for (RefCitizenship citizenship: citizenships) {
+            citizenshipDesc.put(citizenship.getId(), citizenship.getCitDesc());
+        }
+        return citizenshipDesc;
+    }
+
+    public static Map<Integer, String> getRefCitAcqDesc() {
+        List<RefCitAcq> citAcqs = DBRead.getAllRefCitAcq();
+
+        Map<Integer, String> sexDesc = new HashMap<>();
+        for (RefCitAcq citAcq: citAcqs) {
+            sexDesc.put(citAcq.getId(), citAcq.getCitAcqDesc());
+        }
+        return sexDesc;
+    }
+
+    public static Map<Integer, String> getCivilstatusDesc() {
+        List<RefCivilstatus> civilStatuses = DBRead.getAllRefCivilstatus();
+
+        Map<Integer, String> civilStatDesc = new HashMap<>();
+        for (RefCivilstatus civilStat: civilStatuses) {
+            civilStatDesc.put(civilStat.getId(), civilStat.getCstatDesc());
+        }
+        return civilStatDesc;
+    }
+
+    public static Map<Integer, String> getEducLevelDesc() {
+        List<RefEducLevel> educLevels = DBRead.getAllRefEducLevel();
+
+        Map<Integer, String> educLevelDesc = new HashMap<>();
+        for (RefEducLevel eduLevel: educLevels) {
+            educLevelDesc.put(eduLevel.getId(), eduLevel.getEducLevelDesc());
+        }
+        return educLevelDesc;
+    }
+
+    public static Map<Integer, String> getSexDesc() {
+        List<RefSex> sexes = DBRead.getAllRefSex();
+
+        Map<Integer, String> sexDesc = new HashMap<>();
+        for (RefSex sex: sexes) {
+            sexDesc.put(sex.getId(), sex.getSexDesc());
+        }
+        return sexDesc;
+    }
+
+    public static List<FamilyBackground> getFamilyBackgroundByPerson(PersonalInfo p) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.createNamedQuery("familyBackground.findByPID", FamilyBackground.class)
+                    .setParameter("p", p)
+                    .getResultList();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public static List<FamilyChild> getFamilyChildByPerson(PersonalInfo p) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.createNamedQuery("familyChild.findByPID", FamilyChild.class)
+                    .setParameter("p", p)
+                    .getResultList();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public static List<ContactInfo> getContactInfoByPerson(PersonalInfo p) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.createNamedQuery("contactInfo.findByPID", ContactInfo.class)
+                    .setParameter("p", p)
+                    .getResultList();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public static List<EducBackground> getEducBackgroundByPerson(PersonalInfo p) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.createNamedQuery("educBackground.findByPID", EducBackground.class)
+                    .setParameter("p", p)
+                    .getResultList();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

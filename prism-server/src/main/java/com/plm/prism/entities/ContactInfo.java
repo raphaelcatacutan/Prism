@@ -4,6 +4,10 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "contact_info")
+@NamedQuery(
+        name = "contactInfo.findByPID",
+        query = "FROM ContactInfo ci WHERE ci.p = :p"
+)
 public class ContactInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,6 +64,18 @@ public class ContactInfo {
 
     @Column(name = "email_address", length = 50)
     private String emailAddress;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "p_id", nullable = false)
+    private PersonalInfo p;
+
+    public PersonalInfo getP() {
+        return p;
+    }
+
+    public void setP(PersonalInfo p) {
+        this.p = p;
+    }
 
     public Integer getId() {
         return id;

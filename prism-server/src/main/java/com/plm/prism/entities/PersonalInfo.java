@@ -54,6 +54,54 @@ public class PersonalInfo {
     @Column(name = "agency_empno", length = 50)
     private String agencyEmpno;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "sex_id", nullable = false)
+    private RefSex sex;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "cstat_id", nullable = false)
+    private RefCivilstatus cstat;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "cit_id", nullable = false)
+    private RefCitizenship cit;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "cit_acq_id", nullable = false)
+    private RefCitAcq citAcq;
+
+    public RefCitAcq getCitAcq() {
+        return citAcq;
+    }
+
+    public void setCitAcq(RefCitAcq citAcq) {
+        this.citAcq = citAcq;
+    }
+
+    public RefCitizenship getCit() {
+        return cit;
+    }
+
+    public void setCit(RefCitizenship cit) {
+        this.cit = cit;
+    }
+
+    public RefCivilstatus getCstat() {
+        return cstat;
+    }
+
+    public void setCstat(RefCivilstatus cstat) {
+        this.cstat = cstat;
+    }
+
+    public RefSex getSex() {
+        return sex;
+    }
+
+    public void setSex(RefSex sex) {
+        this.sex = sex;
+    }
+
     public Integer getId() {
         return id;
     }
