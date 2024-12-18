@@ -4,7 +4,7 @@
          version="3.0">
   <servlet>
     <servlet-name>DBServlet</servlet-name>
-    <servlet-class>com.plm.infoman.database.DBServlet</servlet-class>
+    <servlet-class>com.plm.prism.servlet.DBServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>DBServlet</servlet-name>

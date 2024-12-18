@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JpaBuddyIdeaProjectConfig">
+    <option name="reLastEntityCreationPackage" value="prism-server/src/main/java/com/plm/prism/entities" />
+    <option name="reverseEngineeringLastDbConnectionId" value="7faf572c-9a76-46b1-9957-ef88ede7d00c" />
+  </component>
+  <component name="JpaPluginProjectSettings" isShowLibraryClassesInOrmView="true" />
+</project>

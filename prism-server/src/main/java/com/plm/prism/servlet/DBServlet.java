@@ -1,6 +1,5 @@
-package com.plm.infoman.database;
+package com.plm.prism.servlet;
 
-import com.plm.infoman.entities.RefSex;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;

@@ -10,5 +10,18 @@
         <property name="hibernate.connection.password">root</property>
         <property name="hibernate.hbm2ddl.auto">update</property>
         <property name="hibernate.show_sql">true</property>
+
+        <mapping class="com.plm.prism.entities.ContactInfo"/>
+        <mapping class="com.plm.prism.entities.EducBackground"/>
+        <mapping class="com.plm.prism.entities.FamilyBackground"/>
+        <mapping class="com.plm.prism.entities.FamilyChild"/>
+        <mapping class="com.plm.prism.entities.PersonalInfo"/>
+        <mapping class="com.plm.prism.entities.RefCitAcq"/>
+        <mapping class="com.plm.prism.entities.RefCitizenship"/>
+        <mapping class="com.plm.prism.entities.RefCivilstatus"/>
+        <mapping class="com.plm.prism.entities.RefEducLevel"/>
+        <mapping class="com.plm.prism.entities.RefSex"/>
     </session-factory>
+
+
 </hibernate-configuration>
