@@ -1,5 +1,5 @@
 import React from 'react';
-import EmployeeListingPage from '../_components/database/employee-listing-page';
+import EmployeeListingPage from './_components/employee-listing-page';
 
 
 export default function Page() {

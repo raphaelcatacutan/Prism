@@ -20,7 +20,7 @@ export default function EmployeeListingPage({}: object) {
           />
 
           <Link
-            href={process.env.NODE_ENV === 'production' ? '/Prism/add' : '/add'}
+            href={process.env.NODE_ENV === 'production' ? '/Prism/database/add' : '/database/add'}
             className={cn(buttonVariants({ variant: 'default' }))}
           >
             <Plus className="mr-2 h-4 w-4" /> Add New
