@@ -1,6 +1,5 @@
 package com.plm.infoman.database;
 
-import com.plm.infoman.entities.PersonalInfo;
 import com.plm.infoman.entities.RefSex;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,7 +13,7 @@ import org.hibernate.cfg.Configuration;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@WebServlet("/add-user")
+@WebServlet("/api/test")
 public class DBServlet extends HttpServlet {
     private static SessionFactory sessionFactory;
 
@@ -40,6 +39,7 @@ public class DBServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
+        System.out.println(request.getParameter("aaa"));
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type");
