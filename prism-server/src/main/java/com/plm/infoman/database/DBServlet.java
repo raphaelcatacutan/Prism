@@ -1,6 +1,5 @@
 package com.plm.infoman.database;
 
-import com.plm.infoman.entities.PersonalInfo;
 import com.plm.infoman.entities.RefSex;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,7 +13,7 @@ import org.hibernate.cfg.Configuration;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@WebServlet("/add-user")
+@WebServlet("/api/test")
 public class DBServlet extends HttpServlet {
     private static SessionFactory sessionFactory;
 

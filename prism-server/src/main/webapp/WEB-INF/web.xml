@@ -6,7 +6,10 @@
     <servlet-name>DBServlet</servlet-name>
     <servlet-class>com.plm.infoman.database.DBServlet</servlet-class>
   </servlet>
-
+  <servlet-mapping>
+    <servlet-name>DBServlet</servlet-name>
+    <url-pattern>/api/*</url-pattern>
+  </servlet-mapping>
 
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>

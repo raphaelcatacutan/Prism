@@ -12,10 +12,10 @@
 1. Run `npx shadcn@latest init -d` on webpage folder
    - Inside this path, you can now install shadcn components
 2. Edit `next.config.ts`
-```ts
+```js
 const nextConfig = {
     output: 'export',
-    assetPrefix: '/Prism/' // for _next error
+    assetPrefix: process.env.NODE_ENV === 'production' ? '/Prism/' : '' // for _next error
 };
 ```
 3. Modify build script in `package.json`
