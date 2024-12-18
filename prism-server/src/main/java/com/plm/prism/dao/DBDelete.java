@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.plm.prism.daosub;
+package com.plm.prism.dao;
 
 import com.plm.prism.entities.*;
 import com.plm.prism.utils.HibernateUtil;
@@ -14,7 +14,7 @@ import org.hibernate.Transaction;
  * @author Robante
  */
 public class DBDelete {
-    public void deleteContactInfo(int contactId) {
+    public static void deleteContactInfo(int contactId) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -32,7 +32,7 @@ public class DBDelete {
         }
     }
 
-    public void deleteFamilyBackground(int familyBgId) {
+    public static void deleteFamilyBackground(int familyBgId) {
 
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -51,7 +51,7 @@ public class DBDelete {
         }
     }
 
-    public void deleteFamilyChildren(int childId) {
+    public static void deleteFamilyChildren(int childId) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -69,7 +69,7 @@ public class DBDelete {
         }
     }
 
-    public void deletePersonalInfo(int personalId) {
+    public static void deletePersonalInfo(int personalId) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -87,7 +87,7 @@ public class DBDelete {
         }
     }
 
-    public void deleteEducBackground(int personalId) {
+    public static void deleteEducBackground(int personalId) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();

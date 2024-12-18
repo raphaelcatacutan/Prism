@@ -6,7 +6,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 public class DBUpdate {
-    public void updateContactInfo(ContactInfo contactInfo) throws Exception {
+    public static void updateContactInfo(ContactInfo contactInfo) throws Exception {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -20,7 +20,7 @@ public class DBUpdate {
         }
     }
 
-    public void updateEducBackground(EducBackground eduBkgrd) throws Exception {
+    public static void updateEducBackground(EducBackground eduBkgrd) throws Exception {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -34,7 +34,7 @@ public class DBUpdate {
         }
     }
 
-    public void updateFamilyBackground(FamilyBackground famBkgrd) throws Exception {
+    public static void updateFamilyBackground(FamilyBackground famBkgrd) throws Exception {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -48,7 +48,7 @@ public class DBUpdate {
         }
     }
 
-    public void updatePersonalInfo(PersonalInfo personalInfo) throws Exception {
+    public static void updatePersonalInfo(PersonalInfo personalInfo) throws Exception {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -62,7 +62,7 @@ public class DBUpdate {
         }
     }
 
-    public void updateFamilyChild(FamilyChild familyChild) throws Exception {
+    public static void updateFamilyChild(FamilyChild familyChild) throws Exception {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();

@@ -12,7 +12,7 @@ import org.hibernate.Transaction;
  * @author Robante
  */
 public class DBCreate {
-    public void createContactInfo(ContactInfo contactInfo) {
+    public static void createContactInfo(ContactInfo contactInfo) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -24,7 +24,7 @@ public class DBCreate {
         }
     }
 
-    public void createFamilyBackground(FamilyBackground familyBackground) {
+    public static void createFamilyBackground(FamilyBackground familyBackground) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -36,7 +36,7 @@ public class DBCreate {
         }
     }
 
-    public void createFamilyChildren(FamilyChild familyChildren) {
+    public static void createFamilyChildren(FamilyChild familyChildren) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -48,8 +48,7 @@ public class DBCreate {
         }
     }
 
-    public void createPersonalInfo(PersonalInfo personalInfo) {
-
+    public static void createPersonalInfo(PersonalInfo personalInfo) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -61,7 +60,7 @@ public class DBCreate {
         }
     }
 
-    public void createEducBackground(EducBackground educBackground) {
+    public static void createEducBackground(EducBackground educBackground) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
 
