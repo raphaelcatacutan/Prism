@@ -30,7 +30,7 @@ export const navItems: NavItem[] = [
   },
   {
     title: 'Employee',
-    url: process.env.NODE_ENV === 'production' ? '/Prism/personal/' : '/personal/',
+    url: process.env.NODE_ENV === 'production' ? '/Prism/database/' : '/database/',
     icon: 'user',
     shortcut: ['e', 'e'],
     isActive: false,

@@ -16,6 +16,7 @@
 const nextConfig = {
     output: 'export',
     assetPrefix: process.env.NODE_ENV === 'production' ? '/Prism/' : '' // for _next error
+   trailingSlash: true,
 };
 ```
 3. Modify build script in `package.json`
