@@ -39,6 +39,7 @@ public class DBServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
+        System.out.println(request.getParameter("aaa"));
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type");

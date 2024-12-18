@@ -25,9 +25,17 @@ import {
     SelectTrigger,
     SelectValue
 } from '@/components/ui/select';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table"
 import { Calendar } from "@/components/ui/calendar"
 import { format } from "date-fns"
-import { CalendarIcon } from "lucide-react"
+import { CalendarIcon, Copy } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {RadioGroup, RadioGroupItem} from '@/components/ui/radio-group';
 import {Card, CardHeader, CardTitle, CardContent} from '@/components/ui/card';
@@ -37,6 +45,19 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion"
+import {useState} from "react";
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+}
+    from '@/components/ui/dialog';
+import {Label} from "@/components/ui/label";
 
 const formSchema = z.object({
     name: z.string().min(2, {
@@ -71,6 +92,63 @@ export default function EmployeeForm() {
     function onSubmit(values: z.infer<typeof formSchema>) {
         console.log(values);
     }
+
+    const invoices = [
+        {
+            invoice: "INV001",
+            paymentStatus: "Paid",
+            totalAmount: "$250.00",
+            paymentMethod: "Credit Card",
+        },
+        {
+            invoice: "INV002",
+            paymentStatus: "Pending",
+            totalAmount: "$150.00",
+            paymentMethod: "PayPal",
+        },
+        {
+            invoice: "INV003",
+            paymentStatus: "Unpaid",
+            totalAmount: "$350.00",
+            paymentMethod: "Bank Transfer",
+        },
+        {
+            invoice: "INV004",
+            paymentStatus: "Paid",
+            totalAmount: "$450.00",
+            paymentMethod: "Credit Card",
+        },
+        {
+            invoice: "INV005",
+            paymentStatus: "Paid",
+            totalAmount: "$550.00",
+            paymentMethod: "PayPal",
+        },
+        {
+            invoice: "INV006",
+            paymentStatus: "Pending",
+            totalAmount: "$200.00",
+            paymentMethod: "Bank Transfer",
+        },
+        {
+            invoice: "INV007",
+            paymentStatus: "Unpaid",
+            totalAmount: "$300.00",
+            paymentMethod: "Credit Card",
+        },
+    ]
+    const [isDialogOpen, setDialogOpen] = useState(false)
+    const [message, setMessage] = useState("Hello");
+
+    const handleRowClick = (e: React.MouseEvent<HTMLTableRowElement, MouseEvent>, x: string) => {
+        e.preventDefault();
+        setDialogOpen(true);
+        setMessage(x)
+    };
+
+    const handleCloseDialog = () => {
+        setDialogOpen(false); // Close dialog
+    };
 
     return (
         <Card className="mx-auto w-full">
@@ -814,6 +892,72 @@ export default function EmployeeForm() {
                                             )}
                                         />
                                     </div>
+                                    <div>
+                                        <h2 className="mt-5 mb-5 text-2xl tracking-tight ">List of Children</h2>
+                                        <Table>
+                                            <TableHeader>
+                                                <TableRow>
+                                                    <TableHead className="w-[100px]">Invoice</TableHead>
+                                                    <TableHead>Status</TableHead>
+                                                    <TableHead>Method</TableHead>
+                                                    <TableHead className="text-right">Amount</TableHead>
+                                                </TableRow>
+                                            </TableHeader>
+                                            <TableBody>
+                                                {invoices.map((invoice) => (
+                                                    <TableRow
+                                                        key={invoice.invoice}
+                                                        className="h-[50px]"
+                                                        onClick={(e) => handleRowClick(e, invoice.totalAmount)} // Trigger dialog on row click
+                                                    >
+                                                        <TableCell
+                                                            className="font-medium">{invoice.invoice}</TableCell>
+                                                        <TableCell>{invoice.paymentStatus}</TableCell>
+                                                        <TableCell>{invoice.paymentMethod}</TableCell>
+                                                        <TableCell
+                                                            className="text-right">{invoice.totalAmount}</TableCell>
+                                                    </TableRow>
+                                                ))}
+                                            </TableBody>
+                                        </Table>
+                                    </div>
+                                    <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
+                                        <DialogTrigger asChild>
+                                            <Button variant="outline">Share</Button>
+                                        </DialogTrigger>
+                                        <DialogContent className="sm:max-w-md">
+                                            <DialogHeader>
+                                                <DialogTitle>Share link</DialogTitle>
+                                                <DialogDescription>
+                                                    {message}
+                                                </DialogDescription>
+                                            </DialogHeader>
+                                            <div className="flex items-center space-x-2">
+                                                <div className="grid flex-1 gap-2">
+                                                    <Label htmlFor="link" className="sr-only">
+                                                        Link
+                                                    </Label>
+                                                    <Input
+                                                        id="link"
+                                                        defaultValue="https://ui.shadcn.com/docs/installation"
+                                                        readOnly
+                                                    />
+                                                </div>
+                                                <Button type="submit" size="sm" className="px-3">
+                                                    <span className="sr-only">Copy</span>
+                                                    <Copy/>
+                                                </Button>
+                                            </div>
+                                            <DialogFooter className="sm:justify-start">
+                                                <DialogClose asChild>
+                                                    <Button type="button" variant="secondary"
+                                                            onClick={handleCloseDialog}>
+                                                        Close
+                                                    </Button>
+                                                </DialogClose>
+                                            </DialogFooter>
+                                        </DialogContent>
+                                    </Dialog>
                                 </AccordionContent>
                             </AccordionItem>
                             <AccordionItem value="item-4">
@@ -821,163 +965,28 @@ export default function EmployeeForm() {
                                     <h2 className="text-2xl font-bold tracking-tight">Education Level</h2>
                                 </AccordionTrigger>
                                 <AccordionContent>
-                                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-                                        <FormField
-                                            control={form.control}
-                                            name="name"
-                                            render={({field}) => (
-                                                <FormItem>
-                                                    <FormLabel>Spouse Last Name</FormLabel>
-                                                    <FormControl>
-                                                        <Input placeholder="Enter your last name" {...field} />
-                                                    </FormControl>
-                                                    <FormMessage/>
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name="name"
-                                            render={({field}) => (
-                                                <FormItem>
-                                                    <FormLabel>Spouse First Name</FormLabel>
-                                                    <FormControl>
-                                                        <Input placeholder="Enter your first name" {...field} />
-                                                    </FormControl>
-                                                    <FormMessage/>
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name="name"
-                                            render={({field}) => (
-                                                <FormItem>
-                                                    <FormLabel>Spouse Middle Name</FormLabel>
-                                                    <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
-                                                    </FormControl>
-                                                    <FormMessage/>
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name="name"
-                                            render={({field}) => (
-                                                <FormItem>
-                                                    <FormLabel>Spouse Occupation</FormLabel>
-                                                    <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
-                                                    </FormControl>
-                                                    <FormMessage/>
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name="name"
-                                            render={({field}) => (
-                                                <FormItem>
-                                                    <FormLabel>Spouse Employer/Business Name</FormLabel>
-                                                    <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
-                                                    </FormControl>
-                                                    <FormMessage/>
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name="name"
-                                            render={({field}) => (
-                                                <FormItem>
-                                                    <FormLabel>Spouse Business Address</FormLabel>
-                                                    <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
-                                                    </FormControl>
-                                                    <FormMessage/>
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name="name"
-                                            render={({field}) => (
-                                                <FormItem>
-                                                    <FormLabel>Father Last Name</FormLabel>
-                                                    <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
-                                                    </FormControl>
-                                                    <FormMessage/>
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name="name"
-                                            render={({field}) => (
-                                                <FormItem>
-                                                    <FormLabel>Father First Name</FormLabel>
-                                                    <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
-                                                    </FormControl>
-                                                    <FormMessage/>
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name="name"
-                                            render={({field}) => (
-                                                <FormItem>
-                                                    <FormLabel>Father Middle Name</FormLabel>
-                                                    <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
-                                                    </FormControl>
-                                                    <FormMessage/>
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name="name"
-                                            render={({field}) => (
-                                                <FormItem>
-                                                    <FormLabel>Mother Maiden Last Name</FormLabel>
-                                                    <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
-                                                    </FormControl>
-                                                    <FormMessage/>
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name="name"
-                                            render={({field}) => (
-                                                <FormItem>
-                                                    <FormLabel>Mother Maiden First Name</FormLabel>
-                                                    <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
-                                                    </FormControl>
-                                                    <FormMessage/>
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name="name"
-                                            render={({field}) => (
-                                                <FormItem>
-                                                    <FormLabel>Mother Maiden Middle Name</FormLabel>
-                                                    <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
-                                                    </FormControl>
-                                                    <FormMessage/>
-                                                </FormItem>
-                                            )}
-                                        />
+                                    <div className="text-2xl tracking-tight">
+                                        <Table>
+                                            <TableHeader>
+                                                <TableRow>
+                                                    <TableHead className="w-[100px]">Invoice</TableHead>
+                                                    <TableHead>Status</TableHead>
+                                                    <TableHead>Method</TableHead>
+                                                    <TableHead className="text-right">Amount</TableHead>
+                                                </TableRow>
+                                            </TableHeader>
+                                            <TableBody>
+                                                {invoices.map((invoice) => (
+                                                    <TableRow key={invoice.invoice} className="h-[50px]">
+                                                        <TableCell className="font-medium">{invoice.invoice}</TableCell>
+                                                        <TableCell>{invoice.paymentStatus}</TableCell>
+                                                        <TableCell>{invoice.paymentMethod}</TableCell>
+                                                        <TableCell
+                                                            className="text-right">{invoice.totalAmount}</TableCell>
+                                                    </TableRow>
+                                                ))}
+                                            </TableBody>
+                                        </Table>
                                     </div>
                                 </AccordionContent>
                             </AccordionItem>
