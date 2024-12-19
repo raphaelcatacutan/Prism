@@ -29,7 +29,7 @@ export const navItems: NavItem[] = [
     items: [] // Empty array as there are no child items for Dashboard
   },
   {
-    title: 'Employee',
+    title: 'Database',
     url: process.env.NODE_ENV === 'production' ? '/Prism/database/' : '/database/',
     icon: 'user',
     shortcut: ['e', 'e'],

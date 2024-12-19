@@ -735,8 +735,6 @@ export default function Page() {
             .catch(error => console.error('Error:', error));
     }, []);
 
-    console.log(data)
-
     return (
         <PageContainer scrollable>
             <div className="space-y-4">

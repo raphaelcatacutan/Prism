@@ -1,9 +1,5 @@
-import EmployeeViewPage from './_components/employee-view-page';
-
-export const metadata = {
-  title: 'Dashboard : Employee View'
-};
+import PersonalInfoViewPage from './_components/personal-info-view-page';
 
 export default function Page() {
-  return <EmployeeViewPage />;
+  return <PersonalInfoViewPage />;
 }

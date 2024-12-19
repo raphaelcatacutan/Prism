@@ -24,5 +24,9 @@ export const citizenship = [
   {
     label: "Filipino",
     value: "Filipino"
+  },
+  {
+    label: "Dual Citizenship",
+    value: "Dual Citizenship"
   }
 ]

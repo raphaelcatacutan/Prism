@@ -35,7 +35,7 @@ import {
 } from "@/components/ui/table"
 import { Calendar } from "@/components/ui/calendar"
 import { format } from "date-fns"
-import { CalendarIcon, Copy } from "lucide-react"
+import { CalendarIcon, Edit } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {RadioGroup, RadioGroupItem} from '@/components/ui/radio-group';
 import {Card, CardHeader, CardTitle, CardContent} from '@/components/ui/card';
@@ -45,110 +45,200 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion"
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {
     Dialog,
     DialogClose,
     DialogContent,
-    DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
+
 }
     from '@/components/ui/dialog';
 import {Label} from "@/components/ui/label";
 
-const formSchema = z.object({
-    name: z.string().min(2, {
-        message: 'Name must be at least 2 characters.'
-    }),
-    country: z.string({
-        required_error: 'Please select a country.'
-    }),
-    email: z.string().email({
-        message: 'Please enter a valid email address.'
-    }),
-    company: z.string().min(1, {
-        message: 'Company name is required.'
-    }),
-    gender: z.enum(['male', 'female', 'other'], {
-        required_error: 'Please select a gender.'
-    })
+const childSchema = z.object({
+    childId: z.number().positive(),
+    fullName: z.string().min(2, { message: "First name must be at least 2 characters long." }),
+    dateOfBirth: z.any()
 });
+const formSchema = z.object({
+    emailAd: z.string().optional(),
+    fatherLastName: z.string().optional(),
+    spouseEmployer: z.string().optional(),
+    motherMiddleName: z.string().optional(),
+    pagibig: z.string().optional(),
+    sss: z.string().optional(),
+    spouseMiddleName: z.string().optional(),
+    fatherFirstName: z.string().optional(),
+    tin: z.string().optional(),
+    height: z.any(),
+    permHouseSt: z.string().optional(),
+    gsis: z.string().optional(),
+    weight: z.any(),
+    resZipCode: z.string().optional(),
+    telNo: z.string().optional(),
+    spouseLastName: z.string().optional(),
+    firstName: z.string().min(1, { message: "First name is required." }),
+    motherFirstName: z.string().optional(),
+    citizenshipAcq: z.string({ message: "Please select a valid citizenship acquisition type." }),
+    lastName: z.string().min(1, { message: "Last name is required." }),
+    civilStatus: z.string({ message: "Please select a valid civil status." }),
+    permHouseNo: z.string().optional(),
+    fatherMiddleName: z.string().optional(),
+    bloodType: z.string().optional(),
+    resHouseSt: z.string().optional(),
+    philHealth: z.string().optional(),
+    permBrgy: z.string().optional(),
+    resBrgy: z.string().optional(),
+    permZipCode: z.string().optional(),
+    motherLastName: z.string().optional(),
+    spouseEmployerAddress: z.string().optional(),
+    placeOfBirth: z.string().optional(),
+    agency: z.string().optional(),
+    sex: z.string({ message: "Please select a valid sex." }),
+    citizenship: z.string({ message: "Please select a valid citizenship." }),
+    dateOfBirth: z.any(),
+    spouseFirstName: z.string().optional(),
+    mobileNo: z.string().optional(),
+    resHouseNo: z.string().optional(),
+    resProv: z.string().optional(),
+    spouseOccupation: z.string().optional(),
+    permHouseVil: z.string().optional(),
+    middleName: z.string().optional(),
+    permCity: z.string().optional(),
+    resHouseVil: z.string().optional(),
+    permProv: z.string().optional(),
+    resCity: z.string().optional(),
+    children: z.array(childSchema)
+});
+export default function PersonalInfoForm() {
 
-export default function EmployeeForm() {
+    const [ data, setData] = useState({});
+
+    const queryParams = new URLSearchParams(window.location.search);
+    const personId = queryParams.get('person_id');
+
+    useEffect(() => {
+        fetch(`http://localhost:8081/Prism/saved_info?person_id=${personId}`)
+            .then(response => response.json())
+            .then(data => {
+                setData(data);
+            })
+            .catch(error => console.error('Error:', error));
+    }, []);
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            name: '',
-            country: '',
-            email: '',
-            company: '',
-            gender: undefined
+            "lastName": "",
+            "emailAd": "",
+            "permHouseNo": "",
+            "fatherLastName": "",
+            "fatherMiddleName": "",
+            "spouseEmployer": "",
+            "bloodType": "",
+            "resHouseSt": "",
+            "civilStatus": "",
+            "motherMiddleName": "",
+            "pagibig": "",
+            "sss": "",
+            "philHealth": "",
+            "permBrgy": "",
+            "spouseMiddleName": "",
+            "fatherFirstName": "",
+            "resBrgy": "",
+            "permZipCode": "",
+            "motherLastName": "",
+            "tin": "",
+            "spouseEmployerAddress": "",
+            "height": "",
+            "placeOfBirth": "",
+            "permHouseSt": "",
+            "agency": "",
+            "gsis": "",
+            "sex": "",
+            "citizenship": "",
+            "weight": "",
+            "dateOfBirth": undefined,
+            "spouseFirstName": "",
+            "mobileNo": "",
+            "resHouseNo": "",
+            "resZipCode": "",
+            "telNo": "",
+            "spouseLastName": "",
+            "firstName": "",
+            "resProv": "",
+            "spouseOccupation": "",
+            "permHouseVil": "",
+            "motherFirstName": "",
+            "middleName": "",
+            "permCity": "",
+            "citizenshipAcq": "",
+            "resHouseVil": "",
+            "permProv": "",
+            "resCity": "",
+            "chilren": []
         }
     });
 
+
+
     function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values);
+        console.log(JSON.stringify(values));
+        try {
+            fetch("http://localhost:8081/Prism/saved_info", {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(values),
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json(); // This parses the JSON body of the response
+            })
+                .then(data => {
+                    console.log(data); // Log the parsed response body
+                })
+        } catch (error) {
+            console.error("Error:", error);
+        }
     }
 
-    const invoices = [
-        {
-            invoice: "INV001",
-            paymentStatus: "Paid",
-            totalAmount: "$250.00",
-            paymentMethod: "Credit Card",
-        },
-        {
-            invoice: "INV002",
-            paymentStatus: "Pending",
-            totalAmount: "$150.00",
-            paymentMethod: "PayPal",
-        },
-        {
-            invoice: "INV003",
-            paymentStatus: "Unpaid",
-            totalAmount: "$350.00",
-            paymentMethod: "Bank Transfer",
-        },
-        {
-            invoice: "INV004",
-            paymentStatus: "Paid",
-            totalAmount: "$450.00",
-            paymentMethod: "Credit Card",
-        },
-        {
-            invoice: "INV005",
-            paymentStatus: "Paid",
-            totalAmount: "$550.00",
-            paymentMethod: "PayPal",
-        },
-        {
-            invoice: "INV006",
-            paymentStatus: "Pending",
-            totalAmount: "$200.00",
-            paymentMethod: "Bank Transfer",
-        },
-        {
-            invoice: "INV007",
-            paymentStatus: "Unpaid",
-            totalAmount: "$300.00",
-            paymentMethod: "Credit Card",
-        },
-    ]
     const [isDialogOpen, setDialogOpen] = useState(false)
-    const [message, setMessage] = useState("Hello");
+    const [message, setMessage] = useState("");
 
-    const handleRowClick = (e: React.MouseEvent<HTMLTableRowElement, MouseEvent>, x: string) => {
-        e.preventDefault();
+    const handleRowClick = (x: string) => {
         setDialogOpen(true);
         setMessage(x)
     };
 
     const handleCloseDialog = () => {
-        setDialogOpen(false); // Close dialog
+        setDialogOpen(false);
     };
+
+    useEffect(() => {
+        const fieldNames = [
+            "emailAd", "fatherLastName", "spouseEmployer", "motherMiddleName", "pagibig", "sss",
+            "spouseMiddleName", "fatherFirstName", "children", "tin", "height", "permHouseSt", "gsis",
+            "spouseLastName", "firstName", "motherFirstName", "citizenshipAcq", "civilStatus", "lastName",
+            "permHouseNo", "fatherMiddleName", "bloodType", "resHouseSt", "philHealth", "permBrgy", "resBrgy",
+            "permZipCode", "motherLastName", "spouseEmployerAddress", "placeOfBirth", "agency", "sex", "citizenship",
+            "dateOfBirth", "spouseFirstName", "mobileNo", "resHouseNo", "resProv", "spouseOccupation",
+            "permHouseVil", "middleName", "permCity", "resHouseVil", "permProv", "resCity", "weight"
+        ];
+
+        // Loop through the field names and set their values dynamically
+        fieldNames.forEach((field) => {
+            if (data.hasOwnProperty(field)) {
+                form.setValue(field, data[field]);  // Set value for each field dynamically
+            }
+        });
+    }, [data]);
 
     return (
         <Card className="mx-auto w-full">
@@ -163,25 +253,31 @@ export default function EmployeeForm() {
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
                             <FormField
                                 control={form.control}
-                                name="name"
-                                render={({field}) => (
-                                    <FormItem>
-                                        <FormLabel>Last Name</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="Enter your last name" {...field} />
-                                        </FormControl>
-                                        <FormMessage/>
-                                    </FormItem>
-                                )}
+                                name="lastName"
+                                render={({field}) => {
+                                    return (
+                                        <FormItem>
+                                            <FormLabel>Last Name</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    {...field}
+                                                    placeholder="Enter your last name" />
+                                            </FormControl>
+                                            <FormMessage/>
+                                        </FormItem>
+                                    )
+                                }}
                             />
                             <FormField
                                 control={form.control}
-                                name="name"
+                                name="firstName"
                                 render={({field}) => (
                                     <FormItem>
                                         <FormLabel>First Name</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter your first name" {...field} />
+                                            <Input
+                                                {...field}
+                                                placeholder="Enter your first name" />
                                         </FormControl>
                                         <FormMessage/>
                                     </FormItem>
@@ -189,12 +285,14 @@ export default function EmployeeForm() {
                             />
                             <FormField
                                 control={form.control}
-                                name="name"
+                                name="middleName"
                                 render={({field}) => (
                                     <FormItem>
                                         <FormLabel>Middle Name</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter your middle name" {...field} />
+                                            <Input
+                                                {...field}
+                                                placeholder="Enter your middle name"/>
                                         </FormControl>
                                         <FormMessage/>
                                     </FormItem>
@@ -202,33 +300,27 @@ export default function EmployeeForm() {
                             />
                             <FormField
                                 control={form.control}
-                                name="gender"
+                                name="sex"
                                 render={({field}) => (
                                     <FormItem className="space-y-4">
                                         <FormLabel>Sex</FormLabel>
                                         <FormControl>
-                                            <RadioGroup
-                                                onValueChange={field.onChange}
+                                            <RadioGroup {...field}
+                                                onChange={field.onChange}
                                                 value={field.value}
                                                 className="flex space-x-4"
                                             >
                                                 <FormItem className="flex items-center space-x-2 space-y--3">
                                                     <FormControl>
-                                                        <RadioGroupItem value="male"/>
+                                                        <RadioGroupItem value="1"/>
                                                     </FormControl>
                                                     <FormLabel className="font-normal">Male</FormLabel>
                                                 </FormItem>
                                                 <FormItem className="flex items-center space-x-2 space-y--3">
                                                     <FormControl>
-                                                        <RadioGroupItem value="female"/>
+                                                        <RadioGroupItem value="2"/>
                                                     </FormControl>
                                                     <FormLabel className="font-normal">Female</FormLabel>
-                                                </FormItem>
-                                                <FormItem className="flex items-center space-x-2 space-y--3">
-                                                    <FormControl>
-                                                        <RadioGroupItem value="other" />
-                                                    </FormControl>
-                                                    <FormLabel className="font-normal">Other</FormLabel>
                                                 </FormItem>
                                             </RadioGroup>
                                         </FormControl>
@@ -238,25 +330,24 @@ export default function EmployeeForm() {
                             />
                             <FormField
                                 control={form.control}
-                                name="country"
+                                name="civilStatus"
                                 render={({field}) => (
                                     <FormItem>
                                         <FormLabel>Civil Status</FormLabel>
-                                        <Select onValueChange={field.onChange} value={field.value}>
+                                        <Select {...field}
+                                                onValueChange={field.onChange}
+                                                value={field.value}>
                                             <FormControl>
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder="Select a country"/>
+                                                    <SelectValue placeholder="Select a status"/>
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                <SelectItem value="usa">USA</SelectItem>
-                                                <SelectItem value="uk">UK</SelectItem>
-                                                <SelectItem value="canada">Canada</SelectItem>
-                                                <SelectItem value="australia">Australia</SelectItem>
-                                                <SelectItem value="germany">Germany</SelectItem>
-                                                <SelectItem value="france">France</SelectItem>
-                                                <SelectItem value="japan">Japan</SelectItem>
-                                                <SelectItem value="brazil">Brazil</SelectItem>
+                                                <SelectItem value="1">Single</SelectItem>
+                                                <SelectItem value="2">Married</SelectItem>
+                                                <SelectItem value="3">Annuled</SelectItem>
+                                                <SelectItem value="4">Separated</SelectItem>
+                                                <SelectItem value="5">Widowed</SelectItem>
                                             </SelectContent>
                                         </Select>
                                         <FormMessage/>
@@ -265,25 +356,21 @@ export default function EmployeeForm() {
                             />
                             <FormField
                                 control={form.control}
-                                name="country"
+                                name="citizenship"
                                 render={({field}) => (
                                     <FormItem>
                                         <FormLabel>Citizenship</FormLabel>
-                                        <Select onValueChange={field.onChange} value={field.value}>
+                                        <Select {...field}
+                                                onValueChange={field.onChange}
+                                                value={field.value}>
                                             <FormControl>
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder="Select a country"/>
+                                                    <SelectValue placeholder="Select a citizenship type"/>
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                <SelectItem value="usa">USA</SelectItem>
-                                                <SelectItem value="uk">UK</SelectItem>
-                                                <SelectItem value="canada">Canada</SelectItem>
-                                                <SelectItem value="australia">Australia</SelectItem>
-                                                <SelectItem value="germany">Germany</SelectItem>
-                                                <SelectItem value="france">France</SelectItem>
-                                                <SelectItem value="japan">Japan</SelectItem>
-                                                <SelectItem value="brazil">Brazil</SelectItem>
+                                                <SelectItem value="1">Filipino</SelectItem>
+                                                <SelectItem value="2">Dual Citizenship</SelectItem>
                                             </SelectContent>
                                         </Select>
                                         <FormMessage/>
@@ -292,25 +379,19 @@ export default function EmployeeForm() {
                             />
                             <FormField
                                 control={form.control}
-                                name="country"
+                                name="citizenshipAcq"
                                 render={({field}) => (
                                     <FormItem>
                                         <FormLabel>Citizenship Acquisition</FormLabel>
                                         <Select onValueChange={field.onChange} value={field.value}>
                                             <FormControl>
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder="Select a country"/>
+                                                    <SelectValue placeholder="Select an acquisition"/>
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                <SelectItem value="usa">USA</SelectItem>
-                                                <SelectItem value="uk">UK</SelectItem>
-                                                <SelectItem value="canada">Canada</SelectItem>
-                                                <SelectItem value="australia">Australia</SelectItem>
-                                                <SelectItem value="germany">Germany</SelectItem>
-                                                <SelectItem value="france">France</SelectItem>
-                                                <SelectItem value="japan">Japan</SelectItem>
-                                                <SelectItem value="brazil">Brazil</SelectItem>
+                                                <SelectItem value="1">Birth</SelectItem>
+                                                <SelectItem value="2">Naturalization</SelectItem>
                                             </SelectContent>
                                         </Select>
                                         <FormMessage/>
@@ -319,12 +400,12 @@ export default function EmployeeForm() {
                             />
                             <FormField
                                 control={form.control}
-                                name="name"
+                                name="bloodType"
                                 render={({field}) => (
                                     <FormItem>
                                         <FormLabel>Blood Type</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter your middle name" {...field} />
+                                            <Input placeholder="Enter your middle name"  {...field} />
                                         </FormControl>
                                         <FormMessage/>
                                     </FormItem>
@@ -332,12 +413,12 @@ export default function EmployeeForm() {
                             />
                             <FormField
                                 control={form.control}
-                                name="name"
+                                name="height"
                                 render={({field}) => (
                                     <FormItem>
                                         <FormLabel>Height</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter your middle name" {...field} />
+                                            <Input type={"number"} {...field} placeholder="Enter your hieght" />
                                         </FormControl>
                                         <FormMessage/>
                                     </FormItem>
@@ -345,12 +426,12 @@ export default function EmployeeForm() {
                             />
                             <FormField
                                 control={form.control}
-                                name="name"
+                                name="weight"
                                 render={({field}) => (
                                     <FormItem>
                                         <FormLabel>Weight</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter your middle name" {...field} />
+                                            <Input type={"number"} {...field} placeholder="Enter your weight" />
                                         </FormControl>
                                         <FormMessage/>
                                     </FormItem>
@@ -358,12 +439,12 @@ export default function EmployeeForm() {
                             />
                             <FormField
                                 control={form.control}
-                                name="name"
+                                name="placeOfBirth"
                                 render={({field}) => (
                                     <FormItem>
                                         <FormLabel>Place of Birth</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter your middle name" {...field} />
+                                            <Input placeholder="Enter your middle name" {...field}/>
                                         </FormControl>
                                         <FormMessage/>
                                     </FormItem>
@@ -371,7 +452,7 @@ export default function EmployeeForm() {
                             />
                             <FormField
                                 control={form.control}
-                                name="name"
+                                name="dateOfBirth"
                                 render={({field}) => (
                                     <FormItem className="grid grid-cols-1 space-y-1 top-20">
                                         <FormLabel>Date of birth</FormLabel>
@@ -398,10 +479,7 @@ export default function EmployeeForm() {
                                                 <Calendar
                                                     mode="single"
                                                     onSelect={field.onChange}
-                                                    disabled={(date) =>
-                                                        date > new Date() || date < new Date("1900-01-01")
-                                                    }
-                                                    initialFocus
+                                                    initialFocus={true}
                                                 />
                                             </PopoverContent>
                                         </Popover>
@@ -420,12 +498,12 @@ export default function EmployeeForm() {
                                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="gsis"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>GSIS Number</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter your last name" {...field} />
+                                                        <Input placeholder="Enter your last name"  {...field}/>
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -433,12 +511,12 @@ export default function EmployeeForm() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="pagibig"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>PagIBIG Number</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter your first name" {...field} />
+                                                        <Input placeholder="Enter your first name"  {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -446,12 +524,12 @@ export default function EmployeeForm() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="philHealth"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>PhilHealth Number</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
+                                                        <Input placeholder="Enter your middle name"  {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -459,7 +537,7 @@ export default function EmployeeForm() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="sss"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>SSS Number</FormLabel>
@@ -472,12 +550,12 @@ export default function EmployeeForm() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="tin"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>TIN</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
+                                                        <Input placeholder="Enter your middle name"   {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -485,12 +563,12 @@ export default function EmployeeForm() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="agency"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>Agency Employee Number</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
+                                                        <Input placeholder="Enter your middle name"   {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -507,12 +585,12 @@ export default function EmployeeForm() {
                                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="resHouseNo"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>Resident House Number</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter your last name" {...field} />
+                                                        <Input placeholder="Enter your last name"  {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -520,12 +598,12 @@ export default function EmployeeForm() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="resHouseSt"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>Resident House Street</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter your first name" {...field} />
+                                                        <Input placeholder="Enter your first name"  {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -533,12 +611,12 @@ export default function EmployeeForm() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="resHouseVil"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>Resident House Village</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
+                                                        <Input placeholder="Enter your middle name"  {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -546,12 +624,12 @@ export default function EmployeeForm() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="resBrgy"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>Resident House Barangay</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
+                                                        <Input placeholder="Enter your middle name"  {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -559,12 +637,12 @@ export default function EmployeeForm() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="resCity"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>Resident House City</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
+                                                        <Input placeholder="Enter your middle name"  {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -572,12 +650,12 @@ export default function EmployeeForm() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="resProv"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>Resident House Province</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
+                                                        <Input placeholder="Enter your middle name"  {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -585,12 +663,12 @@ export default function EmployeeForm() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="resZipCode"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>Resident House ZIP Code</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
+                                                        <Input placeholder="Enter your middle name"  {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -598,12 +676,12 @@ export default function EmployeeForm() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="permHouseNo"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>Permanent House Number</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
+                                                        <Input placeholder="Enter your middle name"  {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -611,12 +689,12 @@ export default function EmployeeForm() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="permHouseSt"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>Permanent House Street</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
+                                                        <Input placeholder="Enter your middle name"  {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -624,12 +702,12 @@ export default function EmployeeForm() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="permHouseVil"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>Permanent House Village</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
+                                                        <Input placeholder="Enter your middle name"  {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -637,7 +715,7 @@ export default function EmployeeForm() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="permBrgy"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>Permanent House Barangay</FormLabel>
@@ -650,12 +728,12 @@ export default function EmployeeForm() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="permCity"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>Permanent House City</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
+                                                        <Input placeholder="Enter your middle name"  {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -663,12 +741,12 @@ export default function EmployeeForm() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="permProv"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>Permanent House Province</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
+                                                        <Input placeholder="Enter your middle name"  {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -676,12 +754,12 @@ export default function EmployeeForm() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="permZipCode"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>Permanent House ZIP Code</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
+                                                        <Input placeholder="Enter your middle name"  {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -689,12 +767,12 @@ export default function EmployeeForm() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="telNo"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>Permanent Telephone Number</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
+                                                        <Input placeholder="Enter your middle name"  {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -702,7 +780,7 @@ export default function EmployeeForm() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="mobileNo"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>Mobile Number</FormLabel>
@@ -715,12 +793,12 @@ export default function EmployeeForm() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="emailAd"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>Email Address</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
+                                                        <Input placeholder="Enter your middle name"  {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -737,12 +815,12 @@ export default function EmployeeForm() {
                                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="spouseLastName"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>Spouse Last Name</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter your last name" {...field} />
+                                                        <Input placeholder="Enter your last name"  {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -750,12 +828,12 @@ export default function EmployeeForm() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="spouseFirstName"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>Spouse First Name</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter your first name" {...field} />
+                                                        <Input placeholder="Enter your first name"  {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -763,12 +841,12 @@ export default function EmployeeForm() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="spouseMiddleName"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>Spouse Middle Name</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
+                                                        <Input placeholder="Enter your middle name"  {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -776,12 +854,12 @@ export default function EmployeeForm() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="spouseOccupation"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>Spouse Occupation</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
+                                                        <Input placeholder="Enter your middle name"  {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -789,12 +867,12 @@ export default function EmployeeForm() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="spouseEmployer"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>Spouse Employer/Business Name</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
+                                                        <Input placeholder="Enter your middle name"  {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -802,12 +880,12 @@ export default function EmployeeForm() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="spouseEmployerAddress"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>Spouse Business Address</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
+                                                        <Input placeholder="Enter your middle name"  {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -815,12 +893,12 @@ export default function EmployeeForm() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="fatherLastName"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>Father Last Name</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
+                                                        <Input placeholder="Enter your middle name"  {...field}/>
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -828,12 +906,12 @@ export default function EmployeeForm() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="fatherFirstName"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>Father First Name</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
+                                                        <Input placeholder="Enter your middle name"  {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -841,12 +919,12 @@ export default function EmployeeForm() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="fatherMiddleName"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>Father Middle Name</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
+                                                        <Input placeholder="Enter your middle name"  {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -854,12 +932,12 @@ export default function EmployeeForm() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="motherLastName"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>Mother Maiden Last Name</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
+                                                        <Input placeholder="Enter your middle name"   {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -867,12 +945,12 @@ export default function EmployeeForm() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="motherFirstName"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>Mother Maiden First Name</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
+                                                        <Input placeholder="Enter your middle name"  {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -880,12 +958,12 @@ export default function EmployeeForm() {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="name"
+                                            name="motherMiddleName"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>Mother Maiden Middle Name</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter your middle name" {...field} />
+                                                        <Input placeholder="Enter your middle name"  {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -897,58 +975,45 @@ export default function EmployeeForm() {
                                         <Table>
                                             <TableHeader>
                                                 <TableRow>
-                                                    <TableHead className="w-[100px]">Invoice</TableHead>
-                                                    <TableHead>Status</TableHead>
-                                                    <TableHead>Method</TableHead>
-                                                    <TableHead className="text-right">Amount</TableHead>
+                                                    <TableHead>Full Name</TableHead>
+                                                    <TableHead>Date of Birth</TableHead>
                                                 </TableRow>
                                             </TableHeader>
                                             <TableBody>
-                                                {invoices.map((invoice) => (
-                                                    <TableRow
-                                                        key={invoice.invoice}
-                                                        className="h-[50px]"
-                                                        onClick={(e) => handleRowClick(e, invoice.totalAmount)} // Trigger dialog on row click
-                                                    >
-                                                        <TableCell
-                                                            className="font-medium">{invoice.invoice}</TableCell>
-                                                        <TableCell>{invoice.paymentStatus}</TableCell>
-                                                        <TableCell>{invoice.paymentMethod}</TableCell>
-                                                        <TableCell
-                                                            className="text-right">{invoice.totalAmount}</TableCell>
+                                                {data.children && data.children.map((child) => (
+                                                    <TableRow className="h-[50px]" key={child["childId"]} onClick={()=> handleRowClick(child["fullName"])}>
+                                                        <TableCell>{child["fullName"]}</TableCell>
+                                                        <TableCell>{child["dateOfBirth"]}</TableCell>
                                                     </TableRow>
                                                 ))}
                                             </TableBody>
                                         </Table>
                                     </div>
                                     <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
-                                        <DialogTrigger asChild>
-                                            <Button variant="outline">Share</Button>
-                                        </DialogTrigger>
                                         <DialogContent className="sm:max-w-md">
                                             <DialogHeader>
-                                                <DialogTitle>Share link</DialogTitle>
-                                                <DialogDescription>
-                                                    {message}
-                                                </DialogDescription>
+                                                <DialogTitle>Child Information</DialogTitle>
                                             </DialogHeader>
-                                            <div className="flex items-center space-x-2">
-                                                <div className="grid flex-1 gap-2">
-                                                    <Label htmlFor="link" className="sr-only">
-                                                        Link
-                                                    </Label>
-                                                    <Input
-                                                        id="link"
-                                                        defaultValue="https://ui.shadcn.com/docs/installation"
-                                                        readOnly
-                                                    />
-                                                </div>
-                                                <Button type="submit" size="sm" className="px-3">
-                                                    <span className="sr-only">Copy</span>
-                                                    <Copy/>
-                                                </Button>
+                                            <div className="grid flex gap-2">
+                                                <Label htmlFor="chfullname">
+                                                    Full Name
+                                                </Label>
+                                                <Input
+                                                    id="chfullname"
+                                                    defaultValue={message}
+                                                />
+                                            </div>
+                                            <div className="grid flex gap-2">
+                                                <Label htmlFor="chdateofbirth">
+                                                    Date of Birth
+                                                </Label>
+                                                <Input
+                                                    id="chdateofbirth"
+                                                    defaultValue="https://ui.shadcn.com/docs/installation"
+                                                />
                                             </div>
                                             <DialogFooter className="sm:justify-start">
+                                                <Button>Save changes</Button>
                                                 <DialogClose asChild>
                                                     <Button type="button" variant="secondary"
                                                             onClick={handleCloseDialog}>
@@ -960,38 +1025,8 @@ export default function EmployeeForm() {
                                     </Dialog>
                                 </AccordionContent>
                             </AccordionItem>
-                            <AccordionItem value="item-4">
-                                <AccordionTrigger>
-                                    <h2 className="text-2xl font-bold tracking-tight">Education Level</h2>
-                                </AccordionTrigger>
-                                <AccordionContent>
-                                    <div className="text-2xl tracking-tight">
-                                        <Table>
-                                            <TableHeader>
-                                                <TableRow>
-                                                    <TableHead className="w-[100px]">Invoice</TableHead>
-                                                    <TableHead>Status</TableHead>
-                                                    <TableHead>Method</TableHead>
-                                                    <TableHead className="text-right">Amount</TableHead>
-                                                </TableRow>
-                                            </TableHeader>
-                                            <TableBody>
-                                                {invoices.map((invoice) => (
-                                                    <TableRow key={invoice.invoice} className="h-[50px]">
-                                                        <TableCell className="font-medium">{invoice.invoice}</TableCell>
-                                                        <TableCell>{invoice.paymentStatus}</TableCell>
-                                                        <TableCell>{invoice.paymentMethod}</TableCell>
-                                                        <TableCell
-                                                            className="text-right">{invoice.totalAmount}</TableCell>
-                                                    </TableRow>
-                                                ))}
-                                            </TableBody>
-                                        </Table>
-                                    </div>
-                                </AccordionContent>
-                            </AccordionItem>
                         </Accordion>
-                        <Button type="submit">Submit</Button>
+                        <Button type={"submit"} className={"w-48"} onClick={() => onSubmit(form.getValues())}>Submit</Button>
                     </form>
                 </Form>
             </CardContent>
