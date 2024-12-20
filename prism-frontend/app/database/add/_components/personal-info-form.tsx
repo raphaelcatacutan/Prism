@@ -86,6 +86,7 @@ const formSchema = z.object({
     lastName: z.string().min(1, { message: "Last name is required." }),
     civilStatus: z.string({ message: "Please select a valid civil status." }),
     permHouseNo: z.string().optional(),
+    sex: z.string().optional(),
     fatherMiddleName: z.string().optional(),
     bloodType: z.string().optional(),
     resHouseSt: z.string().optional(),
@@ -97,7 +98,6 @@ const formSchema = z.object({
     spouseEmployerAddress: z.string().optional(),
     placeOfBirth: z.string().optional(),
     agency: z.string().optional(),
-    sex: z.string({ message: "Please select a valid sex." }),
     citizenship: z.string({ message: "Please select a valid citizenship." }),
     dateOfBirth: z.any(),
     spouseFirstName: z.string().optional(),
@@ -114,21 +114,54 @@ const formSchema = z.object({
     children: z.array(childSchema)
 });
 export default function PersonalInfoForm() {
+    const [ data, setData] = useState({ children: [] });
+    const [isDialogOpen, setDialogOpen] = useState(false)
+    const [dialogMessage, setDialogMessage] = useState("");
 
-    const [ data, setData] = useState({});
-
+    // Loads the data to the form
     const queryParams = new URLSearchParams(window.location.search);
     const personId = queryParams.get('person_id');
-
     useEffect(() => {
-        fetch(`http://localhost:8081/Prism/saved_info?person_id=${personId}`)
+        if (!personId) return
+        fetch(`http://localhost:8081/Prism/info_read_info?person_id=${personId}`)
             .then(response => response.json())
             .then(data => {
+                console.log(personId)
                 setData(data);
             })
             .catch(error => console.error('Error:', error));
     }, []);
+    useEffect(() => {
+        const fieldNames = [
+            "emailAd", "fatherLastName", "spouseEmployer", "motherMiddleName", "pagibig", "sss",
+            "spouseMiddleName", "fatherFirstName", "children", "tin", "height", "permHouseSt", "gsis",
+            "spouseLastName", "firstName", "motherFirstName", "citizenshipAcq", "civilStatus", "lastName",
+            "permHouseNo", "fatherMiddleName", "bloodType", "resHouseSt", "philHealth", "permBrgy", "resBrgy",
+            "permZipCode", "motherLastName", "spouseEmployerAddress", "placeOfBirth", "agency", "sex", "citizenship",
+            "dateOfBirth", "spouseFirstName", "mobileNo", "resHouseNo", "resProv", "spouseOccupation",
+            "permHouseVil", "middleName", "permCity", "resHouseVil", "permProv", "resCity", "weight"
+        ];
 
+        // Loop through the field names and set their values dynamically
+        fieldNames.forEach((field) => {
+            if (data.hasOwnProperty(field)) {
+                // @ts-ignore
+                form.setValue(field, data[field]);  // Set value for each field dynamically
+            }
+        });
+    }, [data]);
+
+    // Children
+    const handleRowClick = (x: string) => {
+        setDialogOpen(true);
+        setDialogMessage(x)
+    };
+    const handleCloseDialog = () => {
+        setDialogOpen(false);
+    };
+
+
+    // Form
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -158,7 +191,6 @@ export default function PersonalInfoForm() {
             "permHouseSt": "",
             "agency": "",
             "gsis": "",
-            "sex": "",
             "citizenship": "",
             "weight": "",
             "dateOfBirth": undefined,
@@ -178,17 +210,13 @@ export default function PersonalInfoForm() {
             "citizenshipAcq": "",
             "resHouseVil": "",
             "permProv": "",
-            "resCity": "",
-            "chilren": []
+            "resCity": ""
         }
     });
-
-
-
     function onSubmit(values: z.infer<typeof formSchema>) {
         console.log(JSON.stringify(values));
         try {
-            fetch("http://localhost:8081/Prism/saved_info", {
+            fetch("http://localhost:8081/Prism/api/test", {
                 method: "POST",
                 headers: {
                     'Accept': 'application/json',
@@ -208,38 +236,6 @@ export default function PersonalInfoForm() {
             console.error("Error:", error);
         }
     }
-
-    const [isDialogOpen, setDialogOpen] = useState(false)
-    const [message, setMessage] = useState("");
-
-    const handleRowClick = (x: string) => {
-        setDialogOpen(true);
-        setMessage(x)
-    };
-
-    const handleCloseDialog = () => {
-        setDialogOpen(false);
-    };
-
-    useEffect(() => {
-        const fieldNames = [
-            "emailAd", "fatherLastName", "spouseEmployer", "motherMiddleName", "pagibig", "sss",
-            "spouseMiddleName", "fatherFirstName", "children", "tin", "height", "permHouseSt", "gsis",
-            "spouseLastName", "firstName", "motherFirstName", "citizenshipAcq", "civilStatus", "lastName",
-            "permHouseNo", "fatherMiddleName", "bloodType", "resHouseSt", "philHealth", "permBrgy", "resBrgy",
-            "permZipCode", "motherLastName", "spouseEmployerAddress", "placeOfBirth", "agency", "sex", "citizenship",
-            "dateOfBirth", "spouseFirstName", "mobileNo", "resHouseNo", "resProv", "spouseOccupation",
-            "permHouseVil", "middleName", "permCity", "resHouseVil", "permProv", "resCity", "weight"
-        ];
-
-        // Loop through the field names and set their values dynamically
-        fieldNames.forEach((field) => {
-            if (data.hasOwnProperty(field)) {
-                form.setValue(field, data[field]);  // Set value for each field dynamically
-            }
-        });
-    }, [data]);
-
     return (
         <Card className="mx-auto w-full">
             <CardHeader>
@@ -305,9 +301,9 @@ export default function PersonalInfoForm() {
                                     <FormItem className="space-y-4">
                                         <FormLabel>Sex</FormLabel>
                                         <FormControl>
-                                            <RadioGroup {...field}
-                                                onChange={field.onChange}
+                                            <RadioGroup
                                                 value={field.value}
+                                                onValueChange={field.onChange}
                                                 className="flex space-x-4"
                                             >
                                                 <FormItem className="flex items-center space-x-2 space-y--3">
@@ -1000,7 +996,7 @@ export default function PersonalInfoForm() {
                                                 </Label>
                                                 <Input
                                                     id="chfullname"
-                                                    defaultValue={message}
+                                                    defaultValue={dialogMessage}
                                                 />
                                             </div>
                                             <div className="grid flex gap-2">

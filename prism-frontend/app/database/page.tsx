@@ -722,17 +722,22 @@ function getTasks() {
 }
 
 export default function Page() {
-
     const [ data, setData] = useState( z.array(infoSchema).parse([]));
 
-    useEffect(() => {
-        fetch('http://localhost:8081/Prism/view_database')
+    const fetchData = () => {
+        fetch('http://localhost:8081/Prism/database_read')
             .then(response => response.json())
             .then(data => {
-                const newData = z.array(infoSchema).parse(data)
-                setData(newData);
+                console.log('Fetched data:', data);
+                setData(data);  // Update the state with the fetched data
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    };
+
+    useEffect(() => {
+        fetchData();
     }, []);
 
     return (
@@ -751,7 +756,13 @@ export default function Page() {
                         <Plus className="mr-2 h-4 w-4"/> Add New
                     </Link>
                 </div>
-                <DataTable data={data} columns={columns} showPagination={true} showToolbar={true} />
+                <DataTable
+                    data={data}
+                    columns={columns}
+                    showPagination={true}
+                    showToolbar={true}
+                    fetchData={fetchData}
+                />
             </div>
         </PageContainer>
     )

@@ -79,6 +79,6 @@ export const columns: ColumnDef<PersonalInfo>[] = [
     },
     {
         id: "actions",
-        cell: ({ row }) => <DataTableRowActions row={row} />,
+        cell: ({row}) => (<DataTableRowActions data={row.original} />),
     },
 ]
