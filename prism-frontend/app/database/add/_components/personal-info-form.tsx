@@ -1123,7 +1123,8 @@ export default function PersonalInfoForm() {
                                 <DialogFooter>
                                     <DialogClose asChild>
                                         <Button type="button" variant="secondary" onClick={() => {
-                                            window.location.href = `${window.location.origin}${window.location.pathname}?person_id=${temp}`;
+                                            const no = temp == 0 ? personId : temp;
+                                            window.location.href = `${window.location.origin}${window.location.pathname}?person_id=${no}`;
                                         }}>
                                             Okay
                                         </Button>
