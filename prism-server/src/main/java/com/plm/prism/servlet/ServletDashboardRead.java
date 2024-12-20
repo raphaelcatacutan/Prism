@@ -7,8 +7,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebServlet("/view_dashboard")
-public class ServletViewDashboard extends HttpServlet {
+@WebServlet("/dashboard_read")
+public class ServletDashboardRead extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
     }

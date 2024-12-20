@@ -15,10 +15,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@WebServlet("/view_database")
-public class ServletViewDatabase extends HttpServlet {
+@WebServlet("/database_read")
+public class ServletDatabaseRead extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        PrintWriter out = response.getWriter();
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -38,14 +37,18 @@ public class ServletViewDatabase extends HttpServlet {
             map.put("civilStatus", civilStatusDesc.get(personalInfo.getCstat().getId()));
             map.put("sex", sexDesc.get(personalInfo.getSex().getId()));
             map.put("citizenship", citizenshipsDesc.get(personalInfo.getCit().getId()));
+            map.put("personId", personalInfo.getId());
 
-            ContactInfo contactInfo = DBRead.getContactInfoByPerson(personalInfo).getFirst();
-            map.put("email", contactInfo.getEmailAddress());
+            List<ContactInfo> contactInfosByPerson = DBRead.getContactInfoByPerson(personalInfo);
+            if (!contactInfosByPerson.isEmpty()) {
+                ContactInfo contactInfo = contactInfosByPerson.getFirst();
+                map.put("email", contactInfo.getEmailAddress());
+            }
 
             JSONObject jsonObject = new JSONObject(map);
             jsonArray.put(jsonObject);
         }
 
-        out.println(jsonArray);
+        response.getWriter().println(jsonArray);
     }
 }
