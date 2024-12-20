@@ -9,7 +9,6 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import {useRouter} from 'next/navigation';
 import {PersonalInfo} from "@/app/database/data/schema";
 import {
     Dialog,
@@ -25,7 +24,6 @@ interface CellActionProps {
 }
 
 export const DataTableRowActions: React.FC<CellActionProps> = ({ data }) => {
-    const router = useRouter();
     return (
         <Dialog>
             <DropdownMenu>
@@ -40,7 +38,7 @@ export const DataTableRowActions: React.FC<CellActionProps> = ({ data }) => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[160px]">
                 <DropdownMenuItem onClick={() => {
-                    const url = `/database/add?person_id=${data.personId}`;
+                    const url = process.env.NODE_ENV === 'production' ? `/Prism/database/add?person_id=${data.personId}` : `/database/add?person_id=${data.personId}`;
                     window.open(url, '_self');
                 }}>Edit</DropdownMenuItem>
                 <DropdownMenuItem>
@@ -77,11 +75,11 @@ export const DataTableRowActions: React.FC<CellActionProps> = ({ data }) => {
                             return response.json();
                         }).then(data => {
                             console.log(data);
+                            window.location.reload();
                         })
                     } catch (error) {
                         console.error("Error:", error);
                     }
-                    window.location.reload();
                 }}>
                     Confirm
                 </Button>

@@ -69,7 +69,7 @@ public class DBDelete {
         }
     }
 
-    public static void deletePersonalInfo(int personalId) {
+    public static String deletePersonalInfo(int personalId) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -78,12 +78,14 @@ public class DBDelete {
             if (personalInfo != null) {
                 session.delete(personalInfo);
                 transaction.commit();
+                return "Success";
             } else {
                 System.out.println("PersonalInfo with ID " + personalId + " not found.");
+                return "Not Found";
             }
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
-            e.printStackTrace();
+            throw new RuntimeException("Error: " + e.getMessage());
         }
     }
 

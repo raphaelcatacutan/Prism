@@ -35,7 +35,7 @@ import {
 } from "@/components/ui/table"
 import { Calendar } from "@/components/ui/calendar"
 import { format } from "date-fns"
-import { CalendarIcon, Edit } from "lucide-react"
+import { CalendarIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {RadioGroup, RadioGroupItem} from '@/components/ui/radio-group';
 import {Card, CardHeader, CardTitle, CardContent} from '@/components/ui/card';
@@ -56,11 +56,6 @@ import {
 } from "@/components/ui/dialog";
 import {Label} from "@/components/ui/label";
 
-const childSchema = z.object({
-    childId: z.number().positive(),
-    fullName: z.string().min(2, { message: "First name must be at least 2 characters long." }),
-    dateOfBirth: z.any()
-});
 const formSchema = z.object({
     emailAd: z.string().optional(),
     fatherLastName: z.string().optional(),
@@ -116,9 +111,11 @@ export default function PersonalInfoForm() {
     const [isDialogChildOpen, setIsDialogChildOpen] = useState(false)
     const [childDialogData, setChildDialogData] = useState("")
 
-    // Loads the data to the form
-    const queryParams = new URLSearchParams(window.location.search);
-    const personId = queryParams.get('person_id');
+    let personId: string | null;
+    if (typeof window !== 'undefined') {
+        const queryParams = new URLSearchParams(window.location.search);
+        personId = queryParams.get('person_id');
+    }
     useEffect(() => {
         if (!personId) return
         fetch(`http://localhost:8081/Prism/info_read_info?person_id=${personId}`)
@@ -143,9 +140,9 @@ export default function PersonalInfoForm() {
         // Loop through the field names and set their values dynamically
         fieldNames.forEach((field) => {
             if (data.hasOwnProperty(field)) {
-                // @ts-ignore
+                // @ts-expect-error adsadsa
                 if (field == "dateOfBirth") form.setValue(field, new Date(data[field]));
-                // @ts-ignore
+                // @ts-expect-error adsadsa
                 else form.setValue(field, data[field]);
             }
         });
@@ -220,7 +217,7 @@ export default function PersonalInfoForm() {
                 "http://localhost:8081/Prism/info_update_info" :
                 "http://localhost:8081/Prism/info_create_info"
 
-            // @ts-ignore
+            // @ts-expect-error adsadsa
             values["person_id"] = personId;
             fetch(fetchLink, {
                 method: "POST",

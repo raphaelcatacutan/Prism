@@ -9,9 +9,6 @@ import {DataTableViewOptions} from "./data-table-view-options"
 
 import {citizenship, sex} from "../data/data"
 import {DataTableFacetedFilter} from "./data-table-faceted-filter"
-import {useEffect, useState} from "react";
-import {z} from "zod";
-import {infoSchema} from "@/app/database/data/schema";
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>

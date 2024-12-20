@@ -3,6 +3,8 @@ package com.plm.prism.entities;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "personal_info")
@@ -69,6 +71,50 @@ public class PersonalInfo {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "cit_acq_id", nullable = false)
     private RefCitAcq citAcq;
+
+    @OneToMany(mappedBy = "p", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ContactInfo> contactInfos = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "p", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<EducBackground> educBackgrounds = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "p", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<FamilyBackground> familyBackgrounds = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "p", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<FamilyChild> familyChildren = new LinkedHashSet<>();
+
+    public Set<FamilyChild> getFamilyChildren() {
+        return familyChildren;
+    }
+
+    public void setFamilyChildren(Set<FamilyChild> familyChildren) {
+        this.familyChildren = familyChildren;
+    }
+
+    public Set<FamilyBackground> getFamilyBackgrounds() {
+        return familyBackgrounds;
+    }
+
+    public void setFamilyBackgrounds(Set<FamilyBackground> familyBackgrounds) {
+        this.familyBackgrounds = familyBackgrounds;
+    }
+
+    public Set<EducBackground> getEducBackgrounds() {
+        return educBackgrounds;
+    }
+
+    public void setEducBackgrounds(Set<EducBackground> educBackgrounds) {
+        this.educBackgrounds = educBackgrounds;
+    }
+
+    public Set<ContactInfo> getContactInfos() {
+        return contactInfos;
+    }
+
+    public void setContactInfos(Set<ContactInfo> contactInfos) {
+        this.contactInfos = contactInfos;
+    }
 
     public RefCitAcq getCitAcq() {
         return citAcq;

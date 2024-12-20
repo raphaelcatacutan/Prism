@@ -18,7 +18,7 @@ public class ServletInfoUpdateChild extends HttpServlet {
     @Override
     protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // Set CORS headers for preflight request (OPTIONS)
-        resp.setHeader("Access-Control-Allow-Origin", "http://localhost:3000"); // Allow specific origin
+        resp.setHeader("Access-Control-Allow-Origin", "*"); // Allow specific origin
         resp.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         resp.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
         resp.setHeader("Access-Control-Allow-Credentials", "true");
