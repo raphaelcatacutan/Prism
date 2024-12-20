@@ -48,17 +48,20 @@ public class DBCreate {
         }
     }
 
-    public static void createPersonalInfo(PersonalInfo personalInfo) {
+    public static Integer createPersonalInfo(PersonalInfo personalInfo) {
         Transaction transaction = null;
+        Integer personId = null; // To store the generated ID
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.save(personalInfo);
+            personId = (Integer) session.save(personalInfo); // Save and get the ID
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
             e.printStackTrace();
         }
+        return personId; // Return the generated ID
     }
+
 
     public static void createEducBackground(EducBackground educBackground) {
         Session session = HibernateUtil.getSessionFactory().openSession();

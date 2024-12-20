@@ -109,7 +109,11 @@ export default function PersonalInfoForm() {
     const [ data, setData] = useState({});
     const [isDialogSavedOpen, setIsDialogSavedOpen] = useState(false)
     const [isDialogChildOpen, setIsDialogChildOpen] = useState(false)
-    const [childDialogData, setChildDialogData] = useState("")
+    const [childDialogData, setChildDialogData] = useState(
+        [-1, ""]
+    )
+    const [famChildren, setFamChildren] = useState([])
+    const [temp, setTemp] = useState(0)
 
     let personId: string | null;
     if (typeof window !== 'undefined') {
@@ -147,16 +151,93 @@ export default function PersonalInfoForm() {
             }
         });
     }, [data]);
+    useEffect(() => {
+        if (!personId) return
+        fetch(`http://localhost:8081/Prism/info_read_child?person_id=${personId}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+                setFamChildren(data);
+            })
+            .catch(error => console.error('Error:', error));
+    }, []);
 
     // Children
-    const handleChildRowClick = (x: string) => {
+    const handleChildRowClick = (id:number, fullName: string) => {
+        console.log(personId)
+        if (!personId) return
         setIsDialogChildOpen(true)
-        setChildDialogData(x)
+        setChildDialogData([id, fullName])
     };
-    const handleChildRowSave = () => {
-
+    const handleChildRowSave = (childId:number|string, fullName:string|number) => {
+        const url = childId != null && typeof childId == "number" && childId > 0?
+            "http://localhost:8081/Prism/info_update_child" :
+            "http://localhost:8081/Prism/info_create_child"
+        try {
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    "childId": childId,
+                    "personId": personId,
+                    "fullName": fullName
+                }),
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            }).then(data => {
+                console.log(data);
+                if (!personId) return setIsDialogChildOpen(false)
+                fetch(`http://localhost:8081/Prism/info_read_child?person_id=${personId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data)
+                        setFamChildren(data);
+                    })
+                    .catch(error => console.error('Error:', error));
+                setIsDialogChildOpen(false)
+            })
+        } catch (error) {
+            console.error("Error:", error);
+        }
     }
-
+    const handleChildDelete = (childId: number | string) => {
+        try {
+            fetch("http://localhost:8081/Prism/info_delete_child", {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    "deleteChild": childId
+                }),
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            }).then(data => {
+                console.log(data);
+                if (!personId) return
+                fetch(`http://localhost:8081/Prism/info_read_child?person_id=${personId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data)
+                        setFamChildren(data);
+                    })
+                    .catch(error => console.error('Error:', error));
+                setIsDialogChildOpen(false)
+            })
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    }
 
     // Form
     const form = useForm<z.infer<typeof formSchema>>({
@@ -231,11 +312,12 @@ export default function PersonalInfoForm() {
                     throw new Error('Network response was not ok');
                 }
                 return response.json(); // This parses the JSON body of the response
+            }).then(data => {
+                setIsDialogSavedOpen(true)
+                console.log(data); // Log the parsed response body
+
+                if (!personId) setTemp(data["personId"])
             })
-                .then(data => {
-                    setIsDialogSavedOpen(true)
-                    console.log(data); // Log the parsed response body
-                })
         } catch (error) {
             console.error("Error:", error);
         }
@@ -976,18 +1058,21 @@ export default function PersonalInfoForm() {
                                             <TableHeader>
                                                 <TableRow>
                                                     <TableHead>Full Name</TableHead>
-                                                    <TableHead>Date of Birth</TableHead>
                                                 </TableRow>
                                             </TableHeader>
                                             <TableBody>
-                                                {[{"childId": 1, "fullName": "raphael", "dateOfBirth": "d"}].map((child) => (
-                                                    <TableRow className="h-[50px]" key={child["childId"]} onClick={()=> handleChildRowClick(child["fullName"])}>
+                                                {famChildren.map((child) => (
+                                                    <TableRow className="h-[50px]" key={child["childId"]}
+                                                          onClick={()=> handleChildRowClick(child["childId"], child["fullName"])}>
                                                         <TableCell>{child["fullName"]}</TableCell>
-                                                        <TableCell>{child["dateOfBirth"]}</TableCell>
                                                     </TableRow>
                                                 ))}
                                             </TableBody>
                                         </Table>
+                                        <Button type="button" variant={"secondary"}
+                                                onClick={()=> handleChildRowClick(0, "")}>
+                                            Add New
+                                        </Button>
                                     </div>
                                     <Dialog open={isDialogChildOpen} onOpenChange={setIsDialogChildOpen}>
                                         <DialogContent className="sm:max-w-md">
@@ -1000,20 +1085,21 @@ export default function PersonalInfoForm() {
                                                 </Label>
                                                 <Input
                                                     id="chfullname"
-                                                    defaultValue={childDialogData}
-                                                />
-                                            </div>
-                                            <div className="grid flex gap-2">
-                                                <Label htmlFor="chdateofbirth">
-                                                    Date of Birth
-                                                </Label>
-                                                <Input
-                                                    id="chdateofbirth"
-                                                    defaultValue=""
+                                                    defaultValue={childDialogData[1]}
+                                                    onChange={(e) =>
+                                                        setChildDialogData([childDialogData[0], e.target.value])}
                                                 />
                                             </div>
                                             <DialogFooter className="sm:justify-start">
-                                                <Button onClick={handleChildRowSave}>Save changes</Button>
+                                                <Button onClick={() =>
+                                                    handleChildRowSave(childDialogData[0], childDialogData[1])}>
+                                                    Save changes
+                                                </Button>
+                                                {typeof childDialogData[0] == "number" && childDialogData[0] > 0 &&
+                                                    <Button onClick={() => handleChildDelete(childDialogData[0])}
+                                                                               variant={"destructive"}>Delete
+                                                    </Button>
+                                                }
                                                 <DialogClose asChild>
                                                     <Button type="button" variant="secondary">
                                                         Close
@@ -1036,7 +1122,9 @@ export default function PersonalInfoForm() {
                                 </DialogDescription>
                                 <DialogFooter>
                                     <DialogClose asChild>
-                                        <Button type="button" variant="secondary">
+                                        <Button type="button" variant="secondary" onClick={() => {
+                                            window.location.href = `${window.location.origin}${window.location.pathname}?person_id=${temp}`;
+                                        }}>
                                             Okay
                                         </Button>
                                     </DialogClose>

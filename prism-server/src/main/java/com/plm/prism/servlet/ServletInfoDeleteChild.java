@@ -32,13 +32,13 @@ public class ServletInfoDeleteChild extends HttpServlet {
         response.setHeader("Access-Control-Allow-Headers", "Content-Type");
         response.setContentType("application/json");
 
-        Map<String, Object> responseMap = new HashMap<>();
         JSONObject jsonObject = DBUtil.parseBody(request.getInputStream());
 
         // Operation
         int deleteInfo = jsonObject.getInt("deleteChild");
         DBDelete.deleteFamilyChildren(deleteInfo);
 
+        Map<String, Object> responseMap = new HashMap<>();
         response.getWriter().println(new JSONObject(responseMap));
     }
 }

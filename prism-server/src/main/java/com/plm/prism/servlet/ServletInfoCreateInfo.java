@@ -64,7 +64,7 @@ public class ServletInfoCreateInfo extends HttpServlet {
         personalInfo.setSssNo(jsonObject.getString("sss"));
         personalInfo.setTin(jsonObject.getString("tin"));
         personalInfo.setAgencyEmpno(jsonObject.getString("agency"));
-        DBCreate.createPersonalInfo(personalInfo);
+        int personId =  DBCreate.createPersonalInfo(personalInfo);
 
         ContactInfo contactInfo = new ContactInfo();
         contactInfo.setResHouseNo(jsonObject.getString("resHouseNo"));
@@ -104,6 +104,7 @@ public class ServletInfoCreateInfo extends HttpServlet {
         DBCreate.createFamilyBackground(familyBackground);
 
         Map<String, Object> responseMap = new HashMap<>();
+        responseMap.put("personId", personId);
 
         response.getWriter().println(new JSONObject(responseMap));
     }

@@ -1,6 +1,7 @@
 package com.plm.prism.servlet;
 
 import com.plm.prism.dao.DBCreate;
+import com.plm.prism.dao.DBRead;
 import com.plm.prism.entities.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -11,6 +12,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 @WebServlet("/info_create_child")
 public class ServletInfoCreateChild extends HttpServlet {
@@ -33,9 +36,15 @@ public class ServletInfoCreateChild extends HttpServlet {
 
         JSONObject jsonObject = DBUtil.parseBody(request.getInputStream());
 
+        PersonalInfo personalInfo = DBRead.getPersonalInfo(Integer.parseInt(jsonObject.getString("personId")));
         FamilyChild familyChild = new FamilyChild();
         familyChild.setChildFullname(jsonObject.getString("fullName"));
-        familyChild.setChildDob(LocalDate.parse(jsonObject.getString("dateOfBirth")));
+        familyChild.setP(personalInfo);
+        // familyChild.setChildDob(LocalDate.parse(jsonObject.getString("dateOfBirth")));
         DBCreate.createFamilyChildren(familyChild);
+
+
+        Map<String, Object> responseMap = new HashMap<>();
+        response.getWriter().println(new JSONObject(responseMap));
     }
 }

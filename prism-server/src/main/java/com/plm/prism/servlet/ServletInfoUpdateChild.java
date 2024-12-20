@@ -12,6 +12,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 @WebServlet("/info_update_child")
 public class ServletInfoUpdateChild extends HttpServlet {
@@ -34,13 +36,16 @@ public class ServletInfoUpdateChild extends HttpServlet {
 
         JSONObject jsonObject = DBUtil.parseBody(request.getInputStream());
 
-        PersonalInfo personalInfo = DBRead.getPersonalInfo(Integer.parseInt(jsonObject.getString("personalInfoId")));
+        PersonalInfo personalInfo = DBRead.getPersonalInfo(Integer.parseInt(jsonObject.getString("personId")));
 
         FamilyChild familyChild = new FamilyChild();
         familyChild.setChildFullname(jsonObject.getString("fullName"));
-        familyChild.setChildDob(LocalDate.parse(jsonObject.getString("dateOfBirth")));
-        familyChild.setId(jsonObject.getInt("id"));
+        // familyChild.setChildDob(LocalDate.parse(jsonObject.getString("dateOfBirth")));
+        familyChild.setId(jsonObject.getInt("childId"));
         familyChild.setP(personalInfo);
         DBUpdate.updateFamilyChild(familyChild);
+
+        Map<String, Object> responseMap = new HashMap<>();
+        response.getWriter().println(new JSONObject(responseMap));
     }
 }

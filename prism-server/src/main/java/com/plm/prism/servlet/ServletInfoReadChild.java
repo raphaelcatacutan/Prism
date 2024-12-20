@@ -6,6 +6,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -27,30 +28,30 @@ public class ServletInfoReadChild extends HttpServlet {
         List<Map<String, Object>> list = new ArrayList<>();
 
         String personIdParameter = request.getParameter("person_id");
-        if (personIdParameter == null) out.println((new JSONObject(list)));
+        if (personIdParameter == null) out.println((new JSONArray(list)));
         else {
             try {
                 int personId = Integer.parseInt(personIdParameter);
 
                 PersonalInfo personInfo = DBRead.getPersonalInfo(personId);
-                if (personInfo == null) out.println((new JSONObject(list)));
+                if (personInfo == null) out.println((new JSONArray(list)));
                 else {
                     List<FamilyChild> familyChilds = DBRead.getFamilyChildByPerson(personInfo);
 
                     for (FamilyChild familyChild : familyChilds) {
                         Map<String, Object> map = new HashMap<>();
-                        map.put("id", familyChild.getId());
+                        map.put("childId", familyChild.getId());
                         map.put("fullName", familyChild.getChildFullname());
                         map.put("dateOfBirth", familyChild.getChildDob());
 
                         list.add(map);
                     }
 
-                    JSONObject jsonObject = new JSONObject(list);
+                    JSONArray jsonObject = new JSONArray(list);
                     out.println(jsonObject);
                 }
             } catch (NumberFormatException e) {
-                out.println((new JSONObject(list)));
+                out.println((new JSONArray(list)));
             }
         }
     }

@@ -28,15 +28,14 @@ export default function RootLayout({ children }: {
         >
         <body className={'overflow-hidden'}>
         <NextTopLoader showSpinner={false}/>
-
         <Providers>
-            <Toaster/>
             <KBar>
                 <SidebarProvider>
                     <AppSidebar/>
                     <SidebarInset>
                         <Header/>
                         {children}
+                        <Toaster/>
                     </SidebarInset>
                 </SidebarProvider>
             </KBar>
