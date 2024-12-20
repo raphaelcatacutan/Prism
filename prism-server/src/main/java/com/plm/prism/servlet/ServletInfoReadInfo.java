@@ -49,8 +49,8 @@ public class ServletInfoReadInfo extends HttpServlet {
                     map.put("citizenshipAcq", personInfo.getCitAcq().getId().toString());
                     map.put("dateOfBirth", personInfo.getDob());
                     map.put("placeOfBirth", personInfo.getPob());
-                    map.put("height", personInfo.getHeight());
-                    map.put("weight", personInfo.getWeight());
+                    map.put("height", personInfo.getHeight().toString());
+                    map.put("weight", personInfo.getWeight().toString());
                     map.put("bloodType", personInfo.getBloodType());
                     map.put("gsis", personInfo.getGsisNo());
                     map.put("pagibig", personInfo.getPagibigId());

@@ -47,15 +47,13 @@ import {
 } from "@/components/ui/accordion"
 import {useEffect, useState} from "react";
 import {
-    Dialog,
-    DialogClose,
+    Dialog, DialogClose,
     DialogContent,
+    DialogDescription,
     DialogFooter,
     DialogHeader,
-    DialogTitle,
-
-}
-    from '@/components/ui/dialog';
+    DialogTitle
+} from "@/components/ui/dialog";
 import {Label} from "@/components/ui/label";
 
 const childSchema = z.object({
@@ -82,11 +80,11 @@ const formSchema = z.object({
     spouseLastName: z.string().optional(),
     firstName: z.string().min(1, { message: "First name is required." }),
     motherFirstName: z.string().optional(),
-    citizenshipAcq: z.string({ message: "Please select a valid citizenship acquisition type." }),
+    citizenshipAcq: z.string().min(1, { message: "Please select a valid citizenship acquisition type." }),
     lastName: z.string().min(1, { message: "Last name is required." }),
-    civilStatus: z.string({ message: "Please select a valid civil status." }),
+    civilStatus: z.string().min(1, { message: "Please select a valid civil status." }),
     permHouseNo: z.string().optional(),
-    sex: z.string().optional(),
+    sex: z.string().min(1, {message: "Sex is required"}),
     fatherMiddleName: z.string().optional(),
     bloodType: z.string().optional(),
     resHouseSt: z.string().optional(),
@@ -98,8 +96,8 @@ const formSchema = z.object({
     spouseEmployerAddress: z.string().optional(),
     placeOfBirth: z.string().optional(),
     agency: z.string().optional(),
-    citizenship: z.string({ message: "Please select a valid citizenship." }),
-    dateOfBirth: z.any(),
+    citizenship: z.string().min(1, { message: "Please select a valid citizenship." }),
+    dateOfBirth: z.date(),
     spouseFirstName: z.string().optional(),
     mobileNo: z.string().optional(),
     resHouseNo: z.string().optional(),
@@ -111,12 +109,12 @@ const formSchema = z.object({
     resHouseVil: z.string().optional(),
     permProv: z.string().optional(),
     resCity: z.string().optional(),
-    children: z.array(childSchema)
 });
 export default function PersonalInfoForm() {
-    const [ data, setData] = useState({ children: [] });
-    const [isDialogOpen, setDialogOpen] = useState(false)
-    const [dialogMessage, setDialogMessage] = useState("");
+    const [ data, setData] = useState({});
+    const [isDialogSavedOpen, setIsDialogSavedOpen] = useState(false)
+    const [isDialogChildOpen, setIsDialogChildOpen] = useState(false)
+    const [childDialogData, setChildDialogData] = useState("")
 
     // Loads the data to the form
     const queryParams = new URLSearchParams(window.location.search);
@@ -134,7 +132,7 @@ export default function PersonalInfoForm() {
     useEffect(() => {
         const fieldNames = [
             "emailAd", "fatherLastName", "spouseEmployer", "motherMiddleName", "pagibig", "sss",
-            "spouseMiddleName", "fatherFirstName", "children", "tin", "height", "permHouseSt", "gsis",
+            "spouseMiddleName", "fatherFirstName", "tin", "height", "permHouseSt", "gsis",
             "spouseLastName", "firstName", "motherFirstName", "citizenshipAcq", "civilStatus", "lastName",
             "permHouseNo", "fatherMiddleName", "bloodType", "resHouseSt", "philHealth", "permBrgy", "resBrgy",
             "permZipCode", "motherLastName", "spouseEmployerAddress", "placeOfBirth", "agency", "sex", "citizenship",
@@ -146,19 +144,21 @@ export default function PersonalInfoForm() {
         fieldNames.forEach((field) => {
             if (data.hasOwnProperty(field)) {
                 // @ts-ignore
-                form.setValue(field, data[field]);  // Set value for each field dynamically
+                if (field == "dateOfBirth") form.setValue(field, new Date(data[field]));
+                // @ts-ignore
+                else form.setValue(field, data[field]);
             }
         });
     }, [data]);
 
     // Children
-    const handleRowClick = (x: string) => {
-        setDialogOpen(true);
-        setDialogMessage(x)
+    const handleChildRowClick = (x: string) => {
+        setIsDialogChildOpen(true)
+        setChildDialogData(x)
     };
-    const handleCloseDialog = () => {
-        setDialogOpen(false);
-    };
+    const handleChildRowSave = () => {
+
+    }
 
 
     // Form
@@ -187,6 +187,7 @@ export default function PersonalInfoForm() {
             "tin": "",
             "spouseEmployerAddress": "",
             "height": "",
+            "sex": "",
             "placeOfBirth": "",
             "permHouseSt": "",
             "agency": "",
@@ -214,9 +215,14 @@ export default function PersonalInfoForm() {
         }
     });
     function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(JSON.stringify(values));
         try {
-            fetch("http://localhost:8081/Prism/api/test", {
+            const fetchLink = personId ?
+                "http://localhost:8081/Prism/info_update_info" :
+                "http://localhost:8081/Prism/info_create_info"
+
+            // @ts-ignore
+            values["person_id"] = personId;
+            fetch(fetchLink, {
                 method: "POST",
                 headers: {
                     'Accept': 'application/json',
@@ -230,6 +236,7 @@ export default function PersonalInfoForm() {
                 return response.json(); // This parses the JSON body of the response
             })
                 .then(data => {
+                    setIsDialogSavedOpen(true)
                     console.log(data); // Log the parsed response body
                 })
         } catch (error) {
@@ -976,8 +983,8 @@ export default function PersonalInfoForm() {
                                                 </TableRow>
                                             </TableHeader>
                                             <TableBody>
-                                                {data.children && data.children.map((child) => (
-                                                    <TableRow className="h-[50px]" key={child["childId"]} onClick={()=> handleRowClick(child["fullName"])}>
+                                                {[{"childId": 1, "fullName": "raphael", "dateOfBirth": "d"}].map((child) => (
+                                                    <TableRow className="h-[50px]" key={child["childId"]} onClick={()=> handleChildRowClick(child["fullName"])}>
                                                         <TableCell>{child["fullName"]}</TableCell>
                                                         <TableCell>{child["dateOfBirth"]}</TableCell>
                                                     </TableRow>
@@ -985,7 +992,7 @@ export default function PersonalInfoForm() {
                                             </TableBody>
                                         </Table>
                                     </div>
-                                    <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
+                                    <Dialog open={isDialogChildOpen} onOpenChange={setIsDialogChildOpen}>
                                         <DialogContent className="sm:max-w-md">
                                             <DialogHeader>
                                                 <DialogTitle>Child Information</DialogTitle>
@@ -996,7 +1003,7 @@ export default function PersonalInfoForm() {
                                                 </Label>
                                                 <Input
                                                     id="chfullname"
-                                                    defaultValue={dialogMessage}
+                                                    defaultValue={childDialogData}
                                                 />
                                             </div>
                                             <div className="grid flex gap-2">
@@ -1005,14 +1012,13 @@ export default function PersonalInfoForm() {
                                                 </Label>
                                                 <Input
                                                     id="chdateofbirth"
-                                                    defaultValue="https://ui.shadcn.com/docs/installation"
+                                                    defaultValue=""
                                                 />
                                             </div>
                                             <DialogFooter className="sm:justify-start">
-                                                <Button>Save changes</Button>
+                                                <Button onClick={handleChildRowSave}>Save changes</Button>
                                                 <DialogClose asChild>
-                                                    <Button type="button" variant="secondary"
-                                                            onClick={handleCloseDialog}>
+                                                    <Button type="button" variant="secondary">
                                                         Close
                                                     </Button>
                                                 </DialogClose>
@@ -1022,7 +1028,24 @@ export default function PersonalInfoForm() {
                                 </AccordionContent>
                             </AccordionItem>
                         </Accordion>
-                        <Button type={"submit"} className={"w-48"} onClick={() => onSubmit(form.getValues())}>Submit</Button>
+                        <Button type={"submit"} className={"w-48"}>Submit</Button>
+                        <Dialog open={isDialogSavedOpen} onOpenChange={setIsDialogSavedOpen}>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Data Saved Successfully!</DialogTitle>
+                                </DialogHeader>
+                                <DialogDescription>
+                                    Your data has been successfully saved and stored in the system.
+                                </DialogDescription>
+                                <DialogFooter>
+                                    <DialogClose asChild>
+                                        <Button type="button" variant="secondary">
+                                            Okay
+                                        </Button>
+                                    </DialogClose>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
                     </form>
                 </Form>
             </CardContent>

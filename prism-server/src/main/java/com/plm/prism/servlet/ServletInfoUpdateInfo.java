@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,7 +44,7 @@ public class ServletInfoUpdateInfo extends HttpServlet {
         RefCitAcq refCitizenshipAcq = DBRead.getRefCitAcq(Integer.parseInt(jsonObject.getString("citizenshipAcq")));
 
         PersonalInfo personalInfo = new PersonalInfo();
-        personalInfo.setId(Integer.parseInt(jsonObject.getString("personalInfoId")));
+        personalInfo.setId(Integer.parseInt(jsonObject.getString("person_id")));
         personalInfo.setFName(jsonObject.getString("firstName"));
         personalInfo.setLName(jsonObject.getString("lastName"));
         personalInfo.setMName(jsonObject.getString("middleName"));
@@ -52,10 +52,12 @@ public class ServletInfoUpdateInfo extends HttpServlet {
         personalInfo.setCstat(refCivilStatus);
         personalInfo.setCit(refCitizenship);
         personalInfo.setCitAcq(refCitizenshipAcq);
-        personalInfo.setDob(LocalDate.parse(jsonObject.getString("dateOfBirth")));
+        personalInfo.setDob(OffsetDateTime.parse(jsonObject.getString("dateOfBirth")).toLocalDate());
         personalInfo.setPob(jsonObject.getString("placeOfBirth"));
-        personalInfo.setHeight(jsonObject.getDouble("height"));
-        personalInfo.setWeight(jsonObject.getDouble("weight"));
+        String heightString = jsonObject.getString("height");
+        String weightString = jsonObject.getString("weight");
+        personalInfo.setHeight(heightString != null && !heightString.trim().isEmpty() ? Double.parseDouble(heightString) : 0.0);
+        personalInfo.setWeight(weightString != null && !weightString.trim().isEmpty() ? Double.parseDouble(weightString) : 0.0);
         personalInfo.setBloodType(jsonObject.getString("bloodType"));
         personalInfo.setGsisNo(jsonObject.getString("gsis"));
         personalInfo.setPagibigId(jsonObject.getString("pagibig"));
@@ -65,7 +67,7 @@ public class ServletInfoUpdateInfo extends HttpServlet {
         personalInfo.setAgencyEmpno(jsonObject.getString("agency"));
         DBUpdate.updatePersonalInfo(personalInfo);
 
-        ContactInfo contactInfo = new ContactInfo();
+        ContactInfo contactInfo = DBRead.getContactInfoByPerson(personalInfo).getFirst();
         contactInfo.setResHouseNo(jsonObject.getString("resHouseNo"));
         contactInfo.setResHouseStreet(jsonObject.getString("resHouseSt"));
         contactInfo.setResVillage(jsonObject.getString("resHouseVil"));
@@ -86,7 +88,7 @@ public class ServletInfoUpdateInfo extends HttpServlet {
         contactInfo.setP(personalInfo);
         DBUpdate.updateContactInfo(contactInfo);
 
-        FamilyBackground familyBackground = new FamilyBackground();
+        FamilyBackground familyBackground = DBRead.getFamilyBackgroundByPerson(personalInfo).getFirst();
         familyBackground.setSpouseLname(jsonObject.getString("spouseLastName"));
         familyBackground.setSpouseFname(jsonObject.getString("spouseFirstName"));
         familyBackground.setSpouseMname(jsonObject.getString("spouseMiddleName"));
@@ -101,5 +103,9 @@ public class ServletInfoUpdateInfo extends HttpServlet {
         familyBackground.setMotherMnFname(jsonObject.getString("motherMiddleName"));
         familyBackground.setP(personalInfo);
         DBUpdate.updateFamilyBackground(familyBackground);
+
+        Map<String, Object> responseMap = new HashMap<>();
+
+        response.getWriter().println(new JSONObject(responseMap));
     }
 }
