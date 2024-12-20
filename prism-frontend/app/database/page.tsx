@@ -761,7 +761,6 @@ export default function Page() {
                     columns={columns}
                     showPagination={true}
                     showToolbar={true}
-                    fetchData={fetchData}
                 />
             </div>
         </PageContainer>

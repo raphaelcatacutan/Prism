@@ -55,12 +55,32 @@ export const DataTableRowActions: React.FC<CellActionProps> = ({ data }) => {
                 <DialogTitle>Are you absolutely sure?</DialogTitle>
                 <DialogDescription>
                     This action cannot be undone. Are you sure you want to permanently
-                    delete this file from our servers?
+                    delete this data from our servers?
                 </DialogDescription>
             </DialogHeader>
             <DialogFooter>
                 <Button onClick={() => {
-                    console.log(data.personId)
+                    try {
+                        fetch("http://localhost:8081/Prism/database_delete", {
+                            method: "POST",
+                            headers: {
+                                'Accept': 'application/json',
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                "deleteInfo": data.personId
+                            }),
+                        }).then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        }).then(data => {
+                            console.log(data);
+                        })
+                    } catch (error) {
+                        console.error("Error:", error);
+                    }
                     window.location.reload();
                 }}>
                     Confirm
