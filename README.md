@@ -1,89 +1,37 @@
-# Prism - random name
+# Prism - Personal Data Management System
 
-## Setting up project
+## 💡 About the Project
 
-### Server
-1. Create an empty maven project
-2. Create a maven project with webapp....soething archetype
-2. Add dependencies (just copy pom)
-3. Add plugins (pom)
+A personal data management system for organizing, storing, and retrieving information using ReactJS for the frontend and Apache Tomcat for the backend
 
-### Front end
-1. Run `npx shadcn@latest init -d` on webpage folder
-   - Inside this path, you can now install shadcn components
-2. Edit `next.config.ts`
-```js
-const nextConfig = {
-    output: 'export',
-    assetPrefix: process.env.NODE_ENV === 'production' ? '/Prism/' : '' // for _next error
-   trailingSlash: true,
-};
-```
-3. Modify build script in `package.json`
-```json
-{
-   "build": "next build && xcopy /e /y /i out\\* ..\\prism-server\\src\\main\\webapp\\"
-}
-```
+<p align="center">
+  <img src="images/records.jpg" alt="demo 3" width="450"/>
+  <img src="images/forms.jpg" alt="demo 2" width="450" hspace="10"/>
+</p>
 
+### **⚙ Tools and Technologies Used**
 
-## notes
-1. no need to add mapping if already annotated (error)
-2. Add something like this for fetching data in the server
-```tsx
-"use client";
-import { useState, useEffect } from 'react';
+1. **Next.js** – The primary React framework used for building the frontend, handling server-side rendering, routing, and static site generation.
+2. **ShadCN UI** – A UI component library integrated with the frontend to create consistent, accessible, and customizable user interface elements.
+3. **Node.js** – Serves as the JavaScript runtime environment for running backend services, development tools, and build processes.
+4. **Java Servlet (Jakarta EE)** – Used on the backend to handle HTTP requests, implement business logic, and manage server-side operations.
+5. **Apache Tomcat v11** – The application server used to deploy and run Java Servlets and JSP pages, serving dynamic content over HTTP.
+6. **JSP** – JavaServer Pages used on the server side to generate dynamic HTML content and interact with Java backend logic.
 
-import Image from "next/image";
+## ❗❗ Disclaimer
 
-export default function Home() {
-  const [hello, setHello] = useState("ra");
+This project was made as part of the final requirement for Information Management class at Pamantasan ng Lungsod ng Maynila. It is for learning purposes only and not meant for real-world or production use. This was a one-time submission and may not update or maintain this project regularly.
 
-  useEffect(() => {
-    fetch('http://localhost:8081/Prism/add-user')
-        .then(response => response.json())
-        .then(data => {
-          console.log(data.message); // "Hello from the servlet!"
-          setHello(data.message);
-        })
-        .catch(error => console.error('Error:', error));
-  }, []); // empty dependency array to run only once after the first render
-```
-3. Add this in `doGet` methods
-```java
-response.setHeader("Access-Control-Allow-Origin", "*");
-response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-response.setHeader("Access-Control-Allow-Headers", "Content-Type");
-```
-4. When old files appear in deployment, run `mvn clean install`
+## 👥 Developers
 
-## Building
+<b>20241 BSCS 2-3
 
-### Requirements
-1. Maven added to PATH
-2. Tomcat v.11 (latest)
-    - This project uses 8081 as port (pom)
-    - This project uses root root as username and passwrod (pom)
-    - Configure user to have `manager-script` role (tomcat installation path)
-3. node.js added to PATH
+<b>LEADER: MANGUNI, John
 
-### Building and running
+-   CATACUTAN, Raphael James C.
+-   FRIAS, Railey 
+-   LIBANG, Michael Angelo
+-   ROBANTE, Floyd
+-   VALENZUELA, Jan
+-   TAN, Hezron
 
-#### Building Front end (no need when not developing front end)
-1. Run `npm run build` on `prism-front end`
-
-#### Building and running server
-1. Start tomcat server
-2. Run `mvn tomcat7:deploy` (first time), `mvn tomcat7:redeploy` when redeploying
-3. Visit in `localhost:8081/Prism`
-
-## Testing
-
-### Front end
-1. Run `npm next dev`
-2. Visit 
-
-### Backend
-1. TODO: Create unit test
-
-# todo: fix this README
